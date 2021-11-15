@@ -28,22 +28,54 @@ void Parser::parse(){
 							break;
 						}
 
-						std::string key;
-						std::string value;
-						bool hasSpaceBefore;
-						bool hasSpaceAfter;
-						hasSpaceBefore = false;
-						hasSpaceAfter = true;
-						int spliceLocation;
-						for(spliceLocation = 0; spliceLocation < subLine.size(); spliceLocation++){
-							if(subLine[spliceLocation] == ':')
-								break;
+						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, true);
+						
+						configGeneral[keyValue.first] = keyValue.second;
+					}
+				}else if(header == "Editor"){
+					std::string subLine;
+					while(std::getline(ifs, subLine)){
+						if(subLine[subLine.size()-1] == 13){
+							subLine.pop_back();
 						}
-						key = subLine.substr(0, spliceLocation - hasSpaceBefore);
-						value = subLine.substr(spliceLocation + hasSpaceAfter + 1, subLine.size() - 1 - spliceLocation - hasSpaceAfter);
-						std::cout << key << std::endl;
-						std::cout << value << std::endl;
-						configGeneral[key] = value;
+
+						if(subLine.size() == 0){
+							break;
+						}
+
+						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, true);
+						
+						configEditor[keyValue.first] = keyValue.second;
+					}
+				}else if(header == "Metadata"){
+					std::string subLine;
+					while(std::getline(ifs, subLine)){
+						if(subLine[subLine.size()-1] == 13){
+							subLine.pop_back();
+						}
+
+						if(subLine.size() == 0){
+							break;
+						}
+
+						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
+						
+						configMetadata[keyValue.first] = keyValue.second;
+					}
+				}else if(header == "Difficulty"){
+					std::string subLine;
+					while(std::getline(ifs, subLine)){
+						if(subLine[subLine.size()-1] == 13){
+							subLine.pop_back();
+						}
+
+						if(subLine.size() == 0){
+							break;
+						}
+
+						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
+						
+						configDifficulty[keyValue.first] = keyValue.second;
 					}
 				}
 			}
@@ -60,4 +92,15 @@ bool Parser::stringCompare(std::string firstString, std::string secondString){
 		}
 	}
 	return ans;
+}
+
+std::pair<std::string, std::string> Parser::parseKeyValue(std::string line, bool hasSpaceBefore, bool hasSpaceAfter)
+{
+	int spliceLocation;
+	for(spliceLocation = 0; spliceLocation < line.size(); spliceLocation++){
+		if(line[spliceLocation] == ':')
+			break;
+	}
+	return make_pair(line.substr(0, spliceLocation - hasSpaceBefore), 
+	line.substr(spliceLocation + hasSpaceAfter + 1, line.size() - 1 - spliceLocation - hasSpaceAfter));
 }
