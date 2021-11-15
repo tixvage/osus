@@ -1,6 +1,6 @@
 #include "Parser.h"
 
 int main(){
-	parse();
+	Parser parser = Parser("BeautifulWorld.osu");
     return 0;
 }

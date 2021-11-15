@@ -4,5 +4,14 @@
 #include <string.h>
 #include <fstream>
 #include <iostream>
-void parse();
-bool stringCompare(std::string, std::string);
+#include <map>
+
+class Parser{
+    public:
+        Parser(std::string file);
+        void parse();
+        std::map<std::string , std::string> general;
+    private:
+        std::string filename;
+        bool stringCompare(std::string, std::string);
+};
