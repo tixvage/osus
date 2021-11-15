@@ -1,11 +1,6 @@
 #pragma once
 #include <vector>
-
-struct CircleData
-{
-	//Circle* circle;
-	float spawn_time;
-	bool is_added = false;
-};
-
-std::vector<CircleData> parse();
+#include "stdio.h"
+#include <string.h>
+#include <fstream>
+#include <iostream>
