@@ -10,7 +10,7 @@ class Parser{
     public:
         Parser(std::string file);
         void parse();
-        std::map<std::string , std::string> general;
+        std::map<std::string , std::string> configGeneral;
     private:
         std::string filename;
         bool stringCompare(std::string, std::string);

@@ -14,7 +14,6 @@ void Parser::parse(){
 			if(line[line.size()-1] == 13){
 				line.pop_back();
 			}
-
 			if(line[0] == '[' and line[line.size()-1] == ']'){
 				std::string header = line.substr(1);
 				header.pop_back();
@@ -29,7 +28,22 @@ void Parser::parse(){
 							break;
 						}
 
-						std::string data[] = subLine.s
+						std::string key;
+						std::string value;
+						bool hasSpaceBefore;
+						bool hasSpaceAfter;
+						hasSpaceBefore = false;
+						hasSpaceAfter = true;
+						int spliceLocation;
+						for(spliceLocation = 0; spliceLocation < subLine.size(); spliceLocation++){
+							if(subLine[spliceLocation] == ':')
+								break;
+						}
+						key = subLine.substr(0, spliceLocation - hasSpaceBefore);
+						value = subLine.substr(spliceLocation + hasSpaceAfter + 1, subLine.size() - 1 - spliceLocation - hasSpaceAfter);
+						std::cout << key << std::endl;
+						std::cout << value << std::endl;
+						configGeneral[key] = value;
 					}
 				}
 			}
@@ -46,11 +60,4 @@ bool Parser::stringCompare(std::string firstString, std::string secondString){
 		}
 	}
 	return ans;
-}
-
-void Parser::removeWhitespaces(std::string &str){
-	for(int i = str.size()-1;i>=0;i--){
-		if(str[i] == ' ') str.pop_back();
-		else break;
-	}
 }
