@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.0)
+project (OSUS)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11")
+set(PROJECT_DIR ${CMAKE_SOURCE_DIR})
+set(PROJECT_INCLUDE_DIR ${PROJECT_DIR}/include)
+
+
+
+set(PROJECT_SOURCE_DIR ${PROJECT_DIR}/src)
+set(source_dir "${PROJECT_SOURCE_DIR}")
+
+file(GLOB_RECURSE source_files "${source_dir}/*.cpp")
+
+set(PROJECT_INCLUDE_DIR
+    ${PROJECT_DIR}/include
+)
+
+include_directories(${PROJECT_INCLUDE_DIR})
+
+add_executable(${PROJECT_NAME} ${source_files})
+target_link_libraries(${PROJECT_NAME} raylib dl pthread)
+target_link_libraries(${PROJECT_NAME} stdc++fs)
