@@ -16,7 +16,7 @@ struct HitObject
     std::vector<int> edgeSounds;
     std::vector<std::pair<int, int> > edgeSets;
 
-    int endTİme;
+    int endTime;
 
     int normalSet;
     int additionSet;
