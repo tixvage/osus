@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdio.h>
 #include <HitObject.h>
+#include <Event.h>
 #include <string.h>
 #include <fstream>
 #include <iostream>
@@ -17,6 +18,7 @@ class Parser{
         std::map<std::string, std::string> configDifficulty;
         std::map<std::string, std::string> configColours;
         std::vector<HitObject> hitObjects;
+        std::vector<Event> events;
     private:
         std::string filename;
         bool stringCompare(std::string, std::string);

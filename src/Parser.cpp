@@ -94,6 +94,62 @@ void Parser::parse(){
 						configDifficulty[keyValue.first] = keyValue.second;
 					}
 					
+				}else if(header == "Events"){
+					std::string subLine;
+					while(std::getline(ifs, subLine)){
+						if(subLine[subLine.size()-1] == 13){
+							subLine.pop_back();
+						}
+
+						if(subLine.size() == 0){
+							break;
+						}
+
+						if(subLine[0] == '/' and subLine[1] == '/'){
+							continue;
+						}
+
+						Event tempEvent;
+						std::vector<std::string> tempVector;
+						tempVector = parseSeperatedLists(subLine, ',');
+
+						if(tempVector[0] == "0"){
+							tempEvent.eventType = 0;
+						}else if(tempVector[0] == "1" or tempVector[0] == "Video"){
+							tempEvent.eventType = 1;
+						}else if(tempVector[0] == "2" or tempVector[0] == "Break"){
+							tempEvent.eventType = 2;
+						}
+
+						tempEvent.startTime = std::stoi(tempVector[1]);
+						std::cout<<tempEvent.eventType<<std::endl;
+						if(tempEvent.eventType == 0){
+							tempEvent.filename = tempVector[2].substr(1, tempVector[2].size()-2);
+							if(tempVector.size()>3)
+							{
+								tempEvent.xOffset = std::stoi(tempVector[3]);
+								tempEvent.yOffset = std::stoi(tempVector[4]);
+							}else{
+								tempEvent.xOffset = 0;
+								tempEvent.yOffset = 0;
+							}
+							
+						}else if(tempEvent.eventType == 1){
+							tempEvent.filename = tempVector[2].substr(1, tempVector[2].size()-2);
+							if(tempVector.size()>3)
+							{
+								tempEvent.xOffset = std::stoi(tempVector[3]);
+								tempEvent.yOffset = std::stoi(tempVector[4]);
+							}else{
+								tempEvent.xOffset = 0;
+								tempEvent.yOffset = 0;
+							}
+						}else if(tempEvent.eventType == 2){
+							tempEvent.endTime = std::stoi(tempVector[2]);
+						}
+
+						events.push_back(tempEvent);
+					}
 				}else if(header == "Colours"){
 					std::string subLine;
 					while(std::getline(ifs, subLine)){
