@@ -26,14 +26,14 @@ void print_events(std::vector<Event> events)
 }
 
 int main(){
-	Parser parser = Parser("BeautifulWorld.osu");
-	parser.parse();
-    print_map("General -> ", parser.configGeneral);
-    print_map("Editor -> ", parser.configEditor);
-    print_map("Metadata -> ", parser.configMetadata);
-    print_map("Difficulty -> ", parser.configDifficulty);
-    print_map("Colours -> ", parser.configColours);
+	Parser parser = Parser();
+	GameFile gm = parser.parse("BeautifulWorld.osu");
+    print_map("General -> ", gm.configGeneral);
+    print_map("Editor -> ", gm.configEditor);
+    print_map("Metadata -> ", gm.configMetadata);
+    print_map("Difficulty -> ", gm.configDifficulty);
+    print_map("Colours -> ", gm.configColours);
 
-    print_events(parser.events);
+    print_events(gm.events);
     return 0;
 }

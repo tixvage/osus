@@ -1,10 +1,9 @@
 #include "Parser.h"
 
-Parser::Parser(std::string file){
-	filename = file;
-}
+Parser::Parser(){}
 
-void Parser::parse(){
+GameFile Parser::parse(std::string filename){
+	GameFile gameFile;
     std::ifstream ifs("../beatmaps/" + filename);
 	std::string line;
 	if (ifs.is_open()){
@@ -34,7 +33,7 @@ void Parser::parse(){
 
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, true);
 						
-						configGeneral[keyValue.first] = keyValue.second;
+						gameFile.configGeneral[keyValue.first] = keyValue.second;
 					}
 				}else if(header == "Editor"){
 					std::string subLine;
@@ -53,7 +52,7 @@ void Parser::parse(){
 
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, true);
 						
-						configEditor[keyValue.first] = keyValue.second;
+						gameFile.configEditor[keyValue.first] = keyValue.second;
 					}
 				}else if(header == "Metadata"){
 					std::string subLine;
@@ -72,7 +71,7 @@ void Parser::parse(){
 
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
 						
-						configMetadata[keyValue.first] = keyValue.second;
+						gameFile.configMetadata[keyValue.first] = keyValue.second;
 					}
 				}else if(header == "Difficulty"){
 					std::string subLine;
@@ -91,7 +90,7 @@ void Parser::parse(){
 
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
 						
-						configDifficulty[keyValue.first] = keyValue.second;
+						gameFile.configDifficulty[keyValue.first] = keyValue.second;
 					}
 					
 				}else if(header == "Events"){
@@ -148,7 +147,7 @@ void Parser::parse(){
 							tempEvent.endTime = std::stoi(tempVector[2]);
 						}
 
-						events.push_back(tempEvent);
+						gameFile.events.push_back(tempEvent);
 					}
 				}else if(header == "TimingPoints"){
 					std::string subLine;
@@ -176,7 +175,7 @@ void Parser::parse(){
 						tempTimingPoint.volume = std::stoi(tempVector[5]);
 						tempTimingPoint.uninherited = bool(std::stoi(tempVector[6]));
 						tempTimingPoint.effects = std::stoi(tempVector[7]);
-						timingPoints.push_back(tempTimingPoint);
+						gameFile.timingPoints.push_back(tempTimingPoint);
 					}
 				}else if(header == "Colours"){
 					std::string subLine;
@@ -195,7 +194,7 @@ void Parser::parse(){
 
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
 						
-						configColours[keyValue.first] = keyValue.second;
+						gameFile.configColours[keyValue.first] = keyValue.second;
 					}
 				}else if(header == "HitObjects"){
 					std::string subLine;
@@ -319,12 +318,14 @@ void Parser::parse(){
 							}
 							else tempHitObject.useDefaultHitSound = true;
 						}
-						hitObjects.push_back(tempHitObject);
+						gameFile.hitObjects.push_back(tempHitObject);
 					}
 				}
 			}
 		}
-	}	
+	}
+
+	return gameFile;	
 }
 
 bool Parser::stringCompare(std::string firstString, std::string secondString){
