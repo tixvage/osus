@@ -122,7 +122,7 @@ void Parser::parse(){
 						}
 
 						tempEvent.startTime = std::stoi(tempVector[1]);
-						std::cout<<tempEvent.eventType<<std::endl;
+						//std::cout<<tempEvent.eventType<<std::endl;
 						if(tempEvent.eventType == 0){
 							tempEvent.filename = tempVector[2].substr(1, tempVector[2].size()-2);
 							if(tempVector.size()>3)
@@ -149,6 +149,34 @@ void Parser::parse(){
 						}
 
 						events.push_back(tempEvent);
+					}
+				}else if(header == "TimingPoints"){
+					std::string subLine;
+					while(std::getline(ifs, subLine)){
+						if(subLine[subLine.size()-1] == 13){
+							subLine.pop_back();
+						}
+
+						if(subLine.size() == 0){
+							break;
+						}
+
+						if(subLine[0] == '/' and subLine[1] == '/'){
+							continue;
+						}
+
+						TimingPoint tempTimingPoint;
+						std::vector<std::string> tempVector;
+						tempVector = parseSeperatedLists(subLine, ',');
+						tempTimingPoint.time = std::stoi(tempVector[0]);
+						tempTimingPoint.meter = std::stoi(tempVector[1]);
+						tempTimingPoint.beatLength = std::stof(tempVector[2]);
+						tempTimingPoint.sampleSet = std::stoi(tempVector[3]);
+						tempTimingPoint.sampleIndex = std::stoi(tempVector[4]);
+						tempTimingPoint.volume = std::stoi(tempVector[5]);
+						tempTimingPoint.uninherited = bool(std::stoi(tempVector[6]));
+						tempTimingPoint.effects = std::stoi(tempVector[7]);
+						timingPoints.push_back(tempTimingPoint);
 					}
 				}else if(header == "Colours"){
 					std::string subLine;
@@ -291,6 +319,7 @@ void Parser::parse(){
 							}
 							else tempHitObject.useDefaultHitSound = true;
 						}
+						hitObjects.push_back(tempHitObject);
 					}
 				}
 			}

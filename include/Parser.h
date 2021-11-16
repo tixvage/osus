@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdio.h>
 #include <HitObject.h>
+#include <TimingPoint.h>
 #include <Event.h>
 #include <string.h>
 #include <fstream>
@@ -18,6 +19,7 @@ class Parser{
         std::map<std::string, std::string> configDifficulty;
         std::map<std::string, std::string> configColours;
         std::vector<HitObject> hitObjects;
+        std::vector<TimingPoint> timingPoints;
         std::vector<Event> events;
     private:
         std::string filename;
