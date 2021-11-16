@@ -17,5 +17,6 @@ int main(){
     print_map("Editor -> ", parser.configEditor);
     print_map("Metadata -> ", parser.configMetadata);
     print_map("Difficulty -> ", parser.configDifficulty);
+    print_map("Colours -> ", parser.configColours);
     return 0;
 }

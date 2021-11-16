@@ -14,6 +14,7 @@ class Parser{
         std::map<std::string , std::string> configEditor;
         std::map<std::string , std::string> configMetadata;
         std::map<std::string , std::string> configDifficulty;
+        std::map<std::string , std::string> configColours;
     private:
         std::string filename;
         bool stringCompare(std::string, std::string);
