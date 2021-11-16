@@ -23,4 +23,7 @@ struct HitObject
     int index;
     int volume;
     std::string filename;
+    bool startingACombo;
+    int skipComboColours;
+    bool useDefaultHitSound;
 };
