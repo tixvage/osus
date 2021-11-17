@@ -4,7 +4,7 @@
 
 class Game{
 	public:
-		Game(){init();}
+		Game(GameFile gf){init(gf);}
 		~Game(){};
 		void run();
 		Texture2D hitCircle;
@@ -12,7 +12,9 @@ class Game{
 		Texture2D approachCircle;
 		Texture2D cursor;
 	private:
-		void init();
+		void init(GameFile gf);
 		void render();
 		void update();
+		double currentTime;
+		GameFile gameFile;
 };

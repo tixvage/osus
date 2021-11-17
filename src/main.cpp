@@ -30,7 +30,7 @@ void print_events(std::vector<Event> events)
 int main(){
 	Parser parser = Parser();
 
-	GameFile gm = parser.parse("BeautifulWorld.osu");
+	GameFile gf = parser.parse("BeautifulWorld.osu");
     /*print_map("General -> ", gm.configGeneral);
     print_map("Editor -> ", gm.configEditor);
     print_map("Metadata -> ", gm.configMetadata);
@@ -39,7 +39,7 @@ int main(){
 
     print_events(gm.events);*/
 
-    Game game;
+    Game game(gf);
     game.run();
 
 

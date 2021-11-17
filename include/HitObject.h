@@ -30,10 +30,10 @@ struct HitObject
 
 class Circle{
     public:
+        Circle();
         void init();
         void render();
         void update();
-        int index;
     private:
 
 };
