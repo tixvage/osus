@@ -50,7 +50,7 @@ void Game::render(){
 	int size = gameFile.hitObjects.size();
 	for(int i = size-1; i >= 0; i--){
 		if(gameFile.hitObjects[i].time - preempt <= currentTime*1000 and gameFile.hitObjects[i].time > currentTime*1000){
-			float approachScale = 2*(1-(currentTime*1000 - gameFile.hitObjects[i].time + preempt)/preempt)+1;
+			float approachScale = 3*(1-(currentTime*1000 - gameFile.hitObjects[i].time + preempt)/preempt)+1;
 			float clampedFade = (currentTime*1000 - gameFile.hitObjects[i].time + fade_in) / fade_in;
 			DrawTextureEx(hitCircle, Vector2{gameFile.hitObjects[i].x*2-hitCircle.width*0.5f,gameFile.hitObjects[i].y*2-hitCircle.height*0.5f},0,1, Fade(PINK, clampedFade));
 			DrawTextureEx(hitCircleOverlay, Vector2{gameFile.hitObjects[i].x*2-hitCircleOverlay.width*0.5f,gameFile.hitObjects[i].y*2-hitCircleOverlay.height*0.5f},0,1, Fade(WHITE, clampedFade));
