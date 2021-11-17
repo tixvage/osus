@@ -1,4 +1,6 @@
+#include "Game.h"
 #include "Parser.h"
+
 
 //Debug
 void print_map(std::string comment, const std::map<std::string, std::string > &m)
@@ -27,13 +29,20 @@ void print_events(std::vector<Event> events)
 
 int main(){
 	Parser parser = Parser();
+
 	GameFile gm = parser.parse("BeautifulWorld.osu");
-    print_map("General -> ", gm.configGeneral);
+    /*print_map("General -> ", gm.configGeneral);
     print_map("Editor -> ", gm.configEditor);
     print_map("Metadata -> ", gm.configMetadata);
     print_map("Difficulty -> ", gm.configDifficulty);
     print_map("Colours -> ", gm.configColours);
 
-    print_events(gm.events);
+    print_events(gm.events);*/
+
+    Game game;
+    game.run();
+
+
+    
     return 0;
 }

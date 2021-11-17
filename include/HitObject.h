@@ -27,3 +27,13 @@ struct HitObject
     int skipComboColours;
     bool useDefaultHitSound;
 };
+
+class Circle{
+    public:
+        void init();
+        void render();
+        void update();
+        int index;
+    private:
+
+};
