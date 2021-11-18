@@ -13,7 +13,10 @@ struct GameFile{
     std::map<std::string, std::string> configMetadata;
     std::map<std::string, std::string> configDifficulty;
     std::map<std::string, std::string> configColours;
-    std::vector<HitObject> hitObjects;
+    std::vector<HitObjectData> hitObjects;
     std::vector<TimingPoint> timingPoints;
     std::vector<Event> events;
+
+    int preempt;
+    int fade_in;
 };

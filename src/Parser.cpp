@@ -218,7 +218,7 @@ GameFile Parser::parse(std::string filename){
 							std::cout << tempVector[i] << " <-> ";
 						}*/
 
-						HitObject tempHitObject;
+						HitObjectData tempHitObject;
 
 						tempHitObject.x = std::stoi(tempVector[0]);
 						tempHitObject.y = std::stoi(tempVector[1]);

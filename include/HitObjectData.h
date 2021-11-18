@@ -1,8 +1,8 @@
-#pragma once
 #include <vector>
 #include <string>
 
-struct HitObjectData{
+struct HitObjectData
+{
     int x;
     int y;
     int time;
@@ -26,25 +26,4 @@ struct HitObjectData{
     bool startingACombo;
     int skipComboColours;
     bool useDefaultHitSound;
-};
-
-class HitObject{
-    public:
-        HitObject() = default;
-        ~HitObject() = default;
-        virtual void init();
-        virtual void render();
-        virtual void update();
-    private:
-
-};
-
-class Circle : public HitObject{
-    public:
-        Circle(HitObjectData data);
-        void init();
-        void render();
-        void update();
-    private:
-        HitObjectData data;
 };
