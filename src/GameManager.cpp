@@ -45,8 +45,9 @@ void GameManager::update(){
 	}
 	bool pressed = IsMouseButtonPressed(0); 
 	for(int i = 0; i < objects.size(); i++){
-		if(pressed && !i){
-			if (CheckCollisionPointCircle(Vector2{GetMouseX(), GetMouseY()},Vector2{objects[i]->x,objects[i]->y}, 106) && pressed){
+		if(pressed && i == 0){
+
+			if (CheckCollisionPointCircle(Vector2{GetMouseX(), GetMouseY()},Vector2{objects[i]->data.x*2,objects[i]->data.y*2}, 56) && pressed){
 				destroyHitObject();
 			}
 		}else{
