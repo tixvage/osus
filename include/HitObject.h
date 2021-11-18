@@ -35,7 +35,6 @@ class HitObject{
         virtual void init(){};
         virtual void render(){};
         virtual void update(){};
-        virtual HitObject* getPointer(){};
     private:
 
 };
@@ -46,7 +45,6 @@ class Circle : public HitObject{
         void init() override; 
         void render() override;
         void update() override;
-        virtual HitObject* getPointer() override;
     private:
         HitObjectData data;
 };

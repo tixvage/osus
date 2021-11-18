@@ -100,5 +100,6 @@ void GameManager::spawnHitObject(HitObjectData data){
 }
 
 void GameManager::destroyHitObject(){
+	delete objects[0];
 	objects.erase(objects.begin());
 }
