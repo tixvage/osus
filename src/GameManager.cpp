@@ -35,14 +35,14 @@ void GameManager::init(){
     hit50 = LoadTexture("../skin/hit50.png");
     hit100 = LoadTexture("../skin/hit100.png");
     hit300 = LoadTexture("../skin/hit300.png");
-    backgroundMusic = LoadMusicStream("../beatmaps/audio.mp3");
-    PlayMusicStream(backgroundMusic);
-    SetMusicVolume(backgroundMusic, 0.2f);
+    
 }
 
 void GameManager::update(){
+
 	UpdateMusicStream(backgroundMusic);
 	currentTime = GetMusicTimePlayed(backgroundMusic);
+	//currentTime = GetTime();
 	int size = gameFile.hitObjects.size();
 	for(int i = size-1; i >= 0; i--){
 		if(gameFile.hitObjects[i].time - gameFile.preempt <= currentTime*1000){
@@ -135,6 +135,12 @@ void GameManager::loadGame(std::string filename){
 	gameFile.p300Final = gameFile.p300 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p300Change;
 	gameFile.p100Final = gameFile.p100 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p100Change;
 	gameFile.p50Final = gameFile.p50 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p50Change;
+
+	std::cout << ("../beatmaps/" + gameFile.configGeneral["AudioFilename"]) << std::endl;
+
+	backgroundMusic = LoadMusicStream(("../beatmaps/" + gameFile.configGeneral["AudioFilename"]).c_str());
+	PlayMusicStream(backgroundMusic);
+    SetMusicVolume(backgroundMusic, 0.2f);
 }
 
 void GameManager::spawnHitObject(HitObjectData data){
