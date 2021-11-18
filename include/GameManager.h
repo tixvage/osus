@@ -9,6 +9,7 @@ class GameManager{
 		void run();
 		void loadGame(std::string filename);
 		void destroyHitObject();
+		void destroyDeadHitObject();
 		Texture2D hitCircle;
 		Texture2D hitCircleOverlay;
 		Texture2D approachCircle;
@@ -18,6 +19,7 @@ class GameManager{
 		GameFile gameFile;
 		Parser parser;
 		std::vector<HitObject*> objects;
+		std::vector<HitObject*> dead_objects;
 	private:
 		static GameManager* inst_;
 		void init();

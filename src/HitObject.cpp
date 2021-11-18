@@ -28,3 +28,14 @@ void Circle::render(){
     DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*2-gm->hitCircleOverlay.width*0.5f,data.y*2-gm->hitCircleOverlay.height*0.5f},0,1, Fade(WHITE, clampedFade));
     DrawTextureEx(gm->approachCircle, Vector2{data.x*2-gm->approachCircle.width*approachScale*0.5f,data.y*2-gm->approachCircle.height*approachScale*0.5f},0,approachScale, Fade(WHITE, clampedFade));
 }
+
+void Circle::dead_render(){
+    DrawRectangle(data.x*2, data.y*2, 5,5, WHITE);
+}
+
+void Circle::dead_update(){
+    GameManager* gm = GameManager::getInstance();
+    if (data.time+500 < gm->currentTime*1000){
+        gm->destroyDeadHitObject();
+    }
+}

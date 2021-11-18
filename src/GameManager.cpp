@@ -47,12 +47,17 @@ void GameManager::update(){
 	for(int i = 0; i < objects.size(); i++){
 		if(pressed && i == 0){
 
-			if (CheckCollisionPointCircle(Vector2{GetMouseX(), GetMouseY()},Vector2{objects[i]->data.x*2,objects[i]->data.y*2}, 56) && pressed){
+			if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*2,(float)objects[i]->data.y*2}, 56) && pressed){
 				destroyHitObject();
 			}
 		}else{
 			objects[i]->update();
 		}
+	}
+
+	//dead animations
+	for(int i = 0; i < dead_objects.size(); i++){
+		dead_objects[i]->dead_update();
 	}
 }
 
@@ -67,6 +72,11 @@ void GameManager::render(){
 	
 	for(int i = objects.size() - 1; i >= 0; i--){
 		objects[i]->render();
+	}
+
+	//dead animations
+	for(int i = dead_objects.size() - 1; i >= 0; i--){
+		dead_objects[i]->dead_render();
 	}
 	//DrawTexture(cursor,GetMouseX(), GetMouseY(), RED);
 	EndDrawing();
@@ -107,6 +117,11 @@ void GameManager::spawnHitObject(HitObjectData data){
 }
 
 void GameManager::destroyHitObject(){
-	delete objects[0];
+	dead_objects.push_back(objects[0]);
 	objects.erase(objects.begin());
+}
+
+void GameManager::destroyDeadHitObject(){
+	delete dead_objects[0];
+	dead_objects.erase(dead_objects.begin());
 }

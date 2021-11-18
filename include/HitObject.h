@@ -30,11 +30,14 @@ struct HitObjectData{
 
 class HitObject{
     public:
+        int point;
         HitObject(){};
         ~HitObject() = default;
-        virtual void init(){};
-        virtual void render(){};
-        virtual void update(){};
+        virtual void init(){}
+        virtual void render(){}
+        virtual void update(){}
+        virtual void dead_update(){}
+        virtual void dead_render(){}
         HitObjectData data;
         float x,y;
     private:
@@ -47,6 +50,8 @@ class Circle : public HitObject{
         void init() override; 
         void render() override;
         void update() override;
+        void dead_update() override;
+        void dead_render() override;
     private:
 
 };
