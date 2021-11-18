@@ -21,6 +21,7 @@ GameManager::GameManager(){
 }
 
 void GameManager::init(){
+	InitAudioDevice();
 	InitWindow(1280,960,"osus?");
 	SetTargetFPS(60);
 	HideCursor();
@@ -34,11 +35,14 @@ void GameManager::init(){
     hit50 = LoadTexture("../skin/hit50.png");
     hit100 = LoadTexture("../skin/hit100.png");
     hit300 = LoadTexture("../skin/hit300.png");
+    backgroundMusic = LoadMusicStream("../beatmaps/audio.mp3");
+    PlayMusicStream(backgroundMusic);
+    SetMusicVolume(backgroundMusic, 0.2f);
 }
 
 void GameManager::update(){
-	currentTime = GetTime();
-
+	UpdateMusicStream(backgroundMusic);
+	currentTime = GetMusicTimePlayed(backgroundMusic);
 	int size = gameFile.hitObjects.size();
 	for(int i = size-1; i >= 0; i--){
 		if(gameFile.hitObjects[i].time - gameFile.preempt <= currentTime*1000){
@@ -53,8 +57,20 @@ void GameManager::update(){
 		if(pressed && i == 0){
 
 			if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*2,(float)objects[i]->data.y*2}, 56) && pressed){
+				
+				if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p50Final){
+					objects[i]->data.point = 0;
+				}
+				else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p100Final){
+					objects[i]->data.point = 1;
+				}
+				else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p300Final){
+					objects[i]->data.point = 2;
+				}
+				else{
+					objects[i]->data.point = 3;
+				}
 				objects[i]->data.time = currentTime*1000;
-				objects[i]->data.point = 3;
 				destroyHitObject();
 			}
 		}else{
@@ -116,6 +132,9 @@ void GameManager::loadGame(std::string filename){
 		gameFile.preempt = 1200;
 		gameFile.fade_in = 800;
 	}
+	gameFile.p300Final = gameFile.p300 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p300Change;
+	gameFile.p100Final = gameFile.p100 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p100Change;
+	gameFile.p50Final = gameFile.p50 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p50Change;
 }
 
 void GameManager::spawnHitObject(HitObjectData data){

@@ -15,7 +15,9 @@ void Circle::init(){
 void Circle::update(){
     GameManager* gm = GameManager::getInstance();
 
-    if(gm->currentTime*1000 > data.time){
+    if(gm->currentTime*1000 > data.time + gm->gameFile.p50Final){
+        data.time = gm->currentTime*1000;
+        data.point = 0;
         gm->destroyHitObject();
     }
 }
@@ -23,6 +25,7 @@ void Circle::update(){
 void Circle::render(){
     GameManager* gm = GameManager::getInstance();
     float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
+    if (approachScale <= 1) approachScale = 1;
     float clampedFade = (gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in;
     DrawTextureEx(gm->hitCircle, Vector2{x,y},0,1, Fade(PINK, clampedFade));
     DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*2-gm->hitCircleOverlay.width*0.5f,data.y*2-gm->hitCircleOverlay.height*0.5f},0,1, Fade(WHITE, clampedFade));
@@ -38,7 +41,9 @@ void Circle::dead_render(){
     float movePoint = (((gm->currentTime*1000 + 200 - data.time )/200-1))*20;
     DrawTextureEx(gm->selectCircle, Vector2{data.x*2-gm->selectCircle.width*scale*0.5f,data.y*2-gm->selectCircle.height*scale*0.5f},0,scale, Fade(WHITE, fadeAnimation));
     if(data.point == 0) DrawTextureEx(gm->hit0, Vector2{data.x*2-gm->hit0.width*1*0.5f ,data.y*2-gm->hit0.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
-    else if(data.point == 3) DrawTextureEx(gm->hit300, Vector2{data.x*2-gm->hit0.width*1*0.5f ,data.y*2-gm->hit300.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
+    else if(data.point == 1) DrawTextureEx(gm->hit50, Vector2{data.x*2-gm->hit50.width*1*0.5f ,data.y*2-gm->hit50.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
+    else if(data.point == 2) DrawTextureEx(gm->hit100, Vector2{data.x*2-gm->hit100.width*1*0.5f ,data.y*2-gm->hit100.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
+    else if(data.point == 3) DrawTextureEx(gm->hit300, Vector2{data.x*2-gm->hit300.width*1*0.5f ,data.y*2-gm->hit300.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
 }
 
 void Circle::dead_update(){

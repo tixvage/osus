@@ -10,6 +10,7 @@ class GameManager{
 		void loadGame(std::string filename);
 		void destroyHitObject();
 		void destroyDeadHitObject();
+
 		Texture2D hitCircle;
 		Texture2D hitCircleOverlay;
 		Texture2D approachCircle;
@@ -19,6 +20,8 @@ class GameManager{
 		Texture2D hit50;
 		Texture2D hit100;
 		Texture2D hit300;
+		Music backgroundMusic;
+
 		double currentTime;
 		GameFile gameFile;
 		Parser parser;
