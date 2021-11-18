@@ -45,7 +45,7 @@ void GameManager::update(){
 	}
 
 	for(int i = 0; i < objects.size(); i++){
-		objects[i].update();
+		objects[i]->update();
 	}
 }
 
@@ -59,7 +59,7 @@ void GameManager::render(){
 	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*scale*0.5f,GetMouseY()-cursor.height*scale*0.5f},0,scale, WHITE);
 	
 	for(int i = 0; i < objects.size(); i++){
-		objects[i].render();
+		objects[i]->render();
 	}
 	//DrawTexture(cursor,GetMouseX(), GetMouseY(), RED);
 	EndDrawing();
@@ -96,7 +96,7 @@ void GameManager::loadGame(std::string filename){
 
 void GameManager::spawnHitObject(HitObjectData data){
 	Circle temp = Circle(data);
-	objects.push_back(temp);
+	objects.push_back(temp.getPointer());
 }
 
 void GameManager::destroyHitObject(){

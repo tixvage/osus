@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-
+#include <iostream>
 struct HitObjectData{
     int x;
     int y;
@@ -35,6 +35,7 @@ class HitObject{
         virtual void init(){};
         virtual void render(){};
         virtual void update(){};
+        virtual HitObject* getPointer(){};
     private:
 
 };
@@ -42,9 +43,10 @@ class HitObject{
 class Circle : public HitObject{
     public:
         Circle(HitObjectData data);
-        void init();
-        void render();
-        void update();
+        void init() override; 
+        void render() override;
+        void update() override;
+        virtual HitObject* getPointer() override;
     private:
         HitObjectData data;
 };

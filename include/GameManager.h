@@ -17,7 +17,7 @@ class GameManager{
 		double currentTime;
 		GameFile gameFile;
 		Parser parser;
-		std::vector<HitObject> objects;
+		std::vector<HitObject*> objects;
 	private:
 		static GameManager* inst_;
 		void init();
