@@ -35,8 +35,10 @@ class HitObject{
         virtual void init(){};
         virtual void render(){};
         virtual void update(){};
+        HitObjectData data;
+        float x,y;
     private:
-
+        
 };
 
 class Circle : public HitObject{
@@ -46,5 +48,5 @@ class Circle : public HitObject{
         void render() override;
         void update() override;
     private:
-        HitObjectData data;
+
 };
