@@ -14,7 +14,11 @@ class GameManager{
 		Texture2D hitCircleOverlay;
 		Texture2D approachCircle;
 		Texture2D cursor;
-
+		Texture2D selectCircle;
+		Texture2D hit0;
+		Texture2D hit50;
+		Texture2D hit100;
+		Texture2D hit300;
 		double currentTime;
 		GameFile gameFile;
 		Parser parser;

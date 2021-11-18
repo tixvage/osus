@@ -9,6 +9,8 @@ struct HitObjectData{
     int type;
     int hitSound;
     
+    int point = 0;
+
     char curveType;
     std::vector<std::pair<int,int> > curvePoints;
     int slides;
@@ -30,7 +32,7 @@ struct HitObjectData{
 
 class HitObject{
     public:
-        int point;
+        
         HitObject(){};
         ~HitObject() = default;
         virtual void init(){}

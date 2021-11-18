@@ -29,6 +29,11 @@ void GameManager::init(){
     hitCircleOverlay = LoadTexture("../skin/hitcircleoverlay.png");
     approachCircle = LoadTexture("../skin/approachcircle.png");
     cursor = LoadTexture("../skin/Extra Cursors/cursor.png");
+    selectCircle = LoadTexture("../skin/hitcircleselect.png");
+    hit0 = LoadTexture("../skin/hit0.png");
+    hit50 = LoadTexture("../skin/hit50.png");
+    hit100 = LoadTexture("../skin/hit100.png");
+    hit300 = LoadTexture("../skin/hit300.png");
 }
 
 void GameManager::update(){
@@ -48,6 +53,8 @@ void GameManager::update(){
 		if(pressed && i == 0){
 
 			if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*2,(float)objects[i]->data.y*2}, 56) && pressed){
+				objects[i]->data.time = currentTime*1000;
+				objects[i]->data.point = 3;
 				destroyHitObject();
 			}
 		}else{
