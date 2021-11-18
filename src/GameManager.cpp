@@ -95,8 +95,8 @@ void GameManager::loadGame(std::string filename){
 }
 
 void GameManager::spawnHitObject(HitObjectData data){
-	Circle temp = Circle(data);
-	objects.push_back(temp.getPointer());
+	Circle *temp = new Circle(data);
+	objects.push_back(temp);
 }
 
 void GameManager::destroyHitObject(){

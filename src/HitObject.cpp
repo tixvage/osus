@@ -7,13 +7,13 @@ Circle::Circle(HitObjectData data){
 }
 
 void Circle::init(){
-    
+
 }
 
 void Circle::update(){
     GameManager* gm = GameManager::getInstance();
 
-    if(gm->currentTime > data.time){
+    if(gm->currentTime*1000 > data.time){
         gm->destroyHitObject();
     }
 }
