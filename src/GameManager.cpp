@@ -58,7 +58,7 @@ void GameManager::render(){
 
 	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*scale*0.5f,GetMouseY()-cursor.height*scale*0.5f},0,scale, WHITE);
 	
-	for(int i = 0; i < objects.size(); i++){
+	for(int i = objects.size() - 1; i >= 0; i--){
 		objects[i]->render();
 	}
 	//DrawTexture(cursor,GetMouseX(), GetMouseY(), RED);
