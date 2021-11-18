@@ -30,11 +30,11 @@ struct HitObjectData{
 
 class HitObject{
     public:
-        HitObject() = default;
+        HitObject(){};
         ~HitObject() = default;
-        virtual void init();
-        virtual void render();
-        virtual void update();
+        virtual void init(){};
+        virtual void render(){};
+        virtual void update(){};
     private:
 
 };
