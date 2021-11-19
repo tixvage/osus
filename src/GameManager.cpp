@@ -26,7 +26,7 @@ GameManager::GameManager(){
 
 void GameManager::init(){
 	InitAudioDevice();
-	InitWindow(1280,960,"osus?");
+	InitWindow(640*windowScale,480*windowScale,"osus?");
 	SetTargetFPS(60);
 	HideCursor();
 	
@@ -71,7 +71,7 @@ void GameManager::update(){
 	for(int i = 0; i < objects.size(); i++){
 		if(pressed && i == 0){
 
-			if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*2,(float)objects[i]->data.y*2}, 56) && pressed){
+			if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*windowScale,(float)objects[i]->data.y*windowScale}, 56*windowScale/2) && pressed){
 				
 				if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p50Final){
 					objects[i]->data.point = 0;
@@ -128,7 +128,7 @@ void GameManager::render(){
 
 	render_points();
 	render_combo();
-	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*scale*0.5f,GetMouseY()-cursor.height*scale*0.5f},0,scale, WHITE);
+	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*windowScale/2*scale*0.5f,GetMouseY()-cursor.height*scale*windowScale/2*0.5f},0,scale*windowScale/2, WHITE);
 	EndDrawing();
 }
 
@@ -206,7 +206,7 @@ void GameManager::render_points(){
         	mod *= 10;
         }
         number = (number % mod - number % (mod/10))/(mod/10);
-        DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150), 0 },0,1, Fade(WHITE, 1));
+        DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)*windowScale/2, 0 },0,windowScale/2, Fade(WHITE, 1));
     }
 }
 
@@ -226,6 +226,6 @@ void GameManager::render_combo(){
         	mod *= 10;
         }
         number = (number % mod - number % (mod/10))/(mod/10);
-        DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)/2, 880 },0,0.5f, Fade(WHITE, 1));
+        DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)*windowScale/2 /2, 440*windowScale },0,0.5f*windowScale/2, Fade(WHITE, 1));
     }
 }
