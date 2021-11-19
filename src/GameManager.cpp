@@ -110,11 +110,11 @@ void GameManager::render(){
 	BeginDrawing();
 	ClearBackground(BLACK);
 	DrawFPS(10, 10);
-	DrawText(TextFormat("%d", score), 50,50,20,BLUE);
+	//DrawText(TextFormat("%d", score), 50,50,20,BLUE);
 
 	float scale = 0.6f;
 
-	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*scale*0.5f,GetMouseY()-cursor.height*scale*0.5f},0,scale, WHITE);
+	
 	
 	for(int i = objects.size() - 1; i >= 0; i--){
 		objects[i]->render();
@@ -125,6 +125,10 @@ void GameManager::render(){
 		dead_objects[i]->dead_render();
 	}
 	//DrawTexture(cursor,GetMouseX(), GetMouseY(), RED);
+
+	render_points();
+	render_combo();
+	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*scale*0.5f,GetMouseY()-cursor.height*scale*0.5f},0,scale, WHITE);
 	EndDrawing();
 }
 
@@ -184,4 +188,44 @@ void GameManager::destroyHitObject(){
 void GameManager::destroyDeadHitObject(){
 	delete dead_objects[0];
 	dead_objects.erase(dead_objects.begin());
+}
+
+void GameManager::render_points(){
+    int digits = 1;
+    int tempScore = score;
+    while(true){
+    	if (tempScore < 10) break;
+    	digits++;
+    	tempScore /= 10;
+    }
+
+    for(int i = digits; i >= 1 ; i--){
+        int number = score;
+        int mod = 10;
+        for(int j = 1; j < i; j++){
+        	mod *= 10;
+        }
+        number = (number % mod - number % (mod/10))/(mod/10);
+        DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150), 0 },0,1, Fade(WHITE, 1));
+    }
+}
+
+void GameManager::render_combo(){
+    int digits = 1;
+    int tempCombo = clickCombo;
+    while(true){
+    	if (tempCombo < 10) break;
+    	digits++;
+    	tempCombo /= 10;
+    }
+
+    for(int i = digits; i >= 1 ; i--){
+        int number = clickCombo;
+        int mod = 10;
+        for(int j = 1; j < i; j++){
+        	mod *= 10;
+        }
+        number = (number % mod - number % (mod/10))/(mod/10);
+        DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)/2, 880 },0,0.5f, Fade(WHITE, 1));
+    }
 }

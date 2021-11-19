@@ -43,6 +43,7 @@ class GameManager{
 		void render();
 		void update();
 		void spawnHitObject(HitObjectData data);
-		
+		void render_points();
+		void render_combo();
 		
 };

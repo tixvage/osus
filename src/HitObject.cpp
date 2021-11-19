@@ -40,20 +40,21 @@ void Circle::render(){
 void Circle::dead_render(){
     //DrawRectangle(data.x*2, data.y*2, 5,5, WHITE);
     GameManager* gm = GameManager::getInstance();
-    float scale = (gm->currentTime*1000 + 200 - data.time )/200;
+    float scale = (gm->currentTime*1000 + 400 - data.time )/400;
     float fadeAnimation = 0.3*(1-((gm->currentTime*1000 + 200 - data.time )/200-1));
-    float fadePoint = (1-((gm->currentTime*1000 + 200 - data.time )/200-1));
-    float movePoint = (((gm->currentTime*1000 + 200 - data.time )/200-1))*20;
-    DrawTextureEx(gm->selectCircle, Vector2{data.x*2-gm->selectCircle.width*scale*0.5f,data.y*2-gm->selectCircle.height*scale*0.5f},0,scale, Fade(WHITE, fadeAnimation));
-    if(data.point == 0) DrawTextureEx(gm->hit0, Vector2{data.x*2-gm->hit0.width*1*0.5f ,data.y*2-gm->hit0.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
-    else if(data.point == 1) DrawTextureEx(gm->hit50, Vector2{data.x*2-gm->hit50.width*1*0.5f ,data.y*2-gm->hit50.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
-    else if(data.point == 2) DrawTextureEx(gm->hit100, Vector2{data.x*2-gm->hit100.width*1*0.5f ,data.y*2-gm->hit100.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
-    else if(data.point == 3) DrawTextureEx(gm->hit300, Vector2{data.x*2-gm->hit300.width*1*0.5f ,data.y*2-gm->hit300.height*1*0.5f - movePoint},0,1, Fade(WHITE, fadePoint));
+    float fadePoint = (1-((gm->currentTime*1000 + 400 - data.time )/400-1));
+    float movePoint = (((gm->currentTime*1000 + 400 - data.time )/400-1))*20;
+    if(data.colour.size() > 2) DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*2-gm->hitCircleOverlay.width*scale*0.5f,data.y*2-gm->hitCircleOverlay.height*scale*0.5f},0,scale, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, fadeAnimation));
+    else DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*2-gm->hitCircleOverlay.width*scale*0.5f,data.y*2-gm->hitCircleOverlay.height*scale*0.5f},0,scale, Fade(WHITE, fadeAnimation));
+    if(data.point == 0) DrawTextureEx(gm->hit0, Vector2{data.x*2-gm->hit0.width*1*0.5f ,data.y*2-gm->hit0.height*1*0.5f},(1-fadePoint)*15,1, Fade(WHITE, fadePoint));
+    else if(data.point == 1) DrawTextureEx(gm->hit50, Vector2{data.x*2-gm->hit50.width*1*0.5f ,data.y*2-gm->hit50.height*1*0.5f },0,1, Fade(WHITE, fadePoint));
+    else if(data.point == 2) DrawTextureEx(gm->hit100, Vector2{data.x*2-gm->hit100.width*1*0.5f ,data.y*2-gm->hit100.height*1*0.5f},0,1, Fade(WHITE, fadePoint));
+    else if(data.point == 3) DrawTextureEx(gm->hit300, Vector2{data.x*2-gm->hit300.width*1*0.5f ,data.y*2-gm->hit300.height*1*0.5f},0,1, Fade(WHITE, fadePoint));
 }
 
 void Circle::dead_update(){
     GameManager* gm = GameManager::getInstance();
-    if (data.time+200 < gm->currentTime*1000){
+    if (data.time+400 < gm->currentTime*1000){
         gm->destroyDeadHitObject();
     }
 }
