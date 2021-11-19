@@ -108,6 +108,10 @@ GameFile Parser::parse(std::string filename){
 							continue;
 						}
 
+						if(subLine[0] == ' '){
+							continue;
+						}
+
 						Event tempEvent;
 						std::vector<std::string> tempVector;
 						tempVector = parseSeperatedLists(subLine, ',');
@@ -118,6 +122,8 @@ GameFile Parser::parse(std::string filename){
 							tempEvent.eventType = 1;
 						}else if(tempVector[0] == "2" or tempVector[0] == "Break"){
 							tempEvent.eventType = 2;
+						}else{
+							continue;
 						}
 
 						tempEvent.startTime = std::stoi(tempVector[1]);
@@ -235,18 +241,28 @@ GameFile Parser::parse(std::string filename){
 							tempHitObject.startingACombo = typeInBinary[2] == '1';
 							tempHitObject.skipComboColours = int(typeInBinary[4] == '1') + int(typeInBinary[5] == '1') * 2 + int(typeInBinary[6] == '1') * 4;
 
-							std::vector<std::string> tempVectorHitSample;
-							tempVectorHitSample = parseSeperatedLists(tempVector[5], ':');
+							if(tempVector.size() > 5){
+								std::vector<std::string> tempVectorHitSample;
+								tempVectorHitSample = parseSeperatedLists(tempVector[5], ':');
 
-							tempHitObject.normalSet = std::stoi(tempVectorHitSample[0]);
-							tempHitObject.additionSet = std::stoi(tempVectorHitSample[1]);
-							tempHitObject.index = std::stoi(tempVectorHitSample[2]);
-							tempHitObject.volume = std::stoi(tempVectorHitSample[3]);
-							if(tempVectorHitSample.size() > 4){
-								tempHitObject.filename = tempVectorHitSample[4];
-								tempHitObject.useDefaultHitSound = false;
+								tempHitObject.normalSet = std::stoi(tempVectorHitSample[0]);
+								tempHitObject.additionSet = std::stoi(tempVectorHitSample[1]);
+								tempHitObject.index = std::stoi(tempVectorHitSample[2]);
+								tempHitObject.volume = std::stoi(tempVectorHitSample[3]);
+								if(tempVectorHitSample.size() > 4){
+									tempHitObject.filename = tempVectorHitSample[4];
+									tempHitObject.useDefaultHitSound = false;
+								}
+								else tempHitObject.useDefaultHitSound = true;
 							}
-							else tempHitObject.useDefaultHitSound = true;
+							else {
+								tempHitObject.normalSet = 0;
+								tempHitObject.additionSet = 0;
+								tempHitObject.index = 0;
+								tempHitObject.volume = 0;
+								tempHitObject.useDefaultHitSound = true;
+							}
+
 						}
 						else if(typeInBinary[1] == '1'){
 							tempHitObject.hitSound = std::stoi(tempVector[4]);
@@ -267,36 +283,44 @@ GameFile Parser::parse(std::string filename){
 							tempHitObject.slides = std::stoi(tempVector[6]);
 							tempHitObject.length = std::stoi(tempVector[7]);
 
-							std::vector<std::string> tempVectorEdgeSounds;
-							tempVectorEdgeSounds = parseSeperatedLists(tempVector[8], '|');
-							for(int i = 0; i < tempVectorEdgeSounds.size(); i++){
-								tempHitObject.edgeSounds.push_back(std::stoi(tempVectorEdgeSounds[i]));
+							if(tempVector.size() > 8){
+								std::vector<std::string> tempVectorEdgeSounds;
+								tempVectorEdgeSounds = parseSeperatedLists(tempVector[8], '|');
+								for(int i = 0; i < tempVectorEdgeSounds.size(); i++){
+									tempHitObject.edgeSounds.push_back(std::stoi(tempVectorEdgeSounds[i]));
+								}
 							}
+							if(tempVector.size() > 9){
+								std::vector<std::string> tempVectorEdgeSets;
+								tempVectorEdgeSets = parseSeperatedLists(tempVector[9], '|');
 
-							std::vector<std::string> tempVectorEdgeSets;
-							tempVectorEdgeSets = parseSeperatedLists(tempVector[9], '|');
-
-							tempHitObject.curveType = tempVectorEdgeSets[0][0];
-
-							for(int i = 1; i < tempVectorEdgeSets.size(); i++){
-								std::vector<std::string> tempVectorEdgeSetsCords;
-								tempVectorEdgeSetsCords = parseSeperatedLists(tempVectorEdgeSets[i], ':');
-								tempHitObject.edgeSets.push_back(std::make_pair(std::stoi(tempVectorEdgeSetsCords[0]), std::stoi(tempVectorEdgeSetsCords[1])));
+								for(int i = 1; i < tempVectorEdgeSets.size(); i++){
+									std::vector<std::string> tempVectorEdgeSetsCords;
+									tempVectorEdgeSetsCords = parseSeperatedLists(tempVectorEdgeSets[i], ':');
+									tempHitObject.edgeSets.push_back(std::make_pair(std::stoi(tempVectorEdgeSetsCords[0]), std::stoi(tempVectorEdgeSetsCords[1])));
+								}
 							}
+							if(tempVector.size() > 10){
+								std::vector<std::string> tempVectorHitSample;
+								tempVectorHitSample = parseSeperatedLists(tempVector[10], ':');
 
-							std::vector<std::string> tempVectorHitSample;
-							tempVectorHitSample = parseSeperatedLists(tempVector[10], ':');
-
-							tempHitObject.normalSet = std::stoi(tempVectorHitSample[0]);
-							tempHitObject.additionSet = std::stoi(tempVectorHitSample[1]);
-							tempHitObject.index = std::stoi(tempVectorHitSample[2]);
-							tempHitObject.volume = std::stoi(tempVectorHitSample[3]);
-
-							if(tempVectorHitSample.size() > 4){
-								tempHitObject.filename = tempVectorHitSample[4];
-								tempHitObject.useDefaultHitSound = false;
+								tempHitObject.normalSet = std::stoi(tempVectorHitSample[0]);
+								tempHitObject.additionSet = std::stoi(tempVectorHitSample[1]);
+								tempHitObject.index = std::stoi(tempVectorHitSample[2]);
+								tempHitObject.volume = std::stoi(tempVectorHitSample[3]);
+								if(tempVectorHitSample.size() > 4){
+									tempHitObject.filename = tempVectorHitSample[4];
+									tempHitObject.useDefaultHitSound = false;
+								}
+								else tempHitObject.useDefaultHitSound = true;
 							}
-							else tempHitObject.useDefaultHitSound = true;
+							else {
+								tempHitObject.normalSet = 0;
+								tempHitObject.additionSet = 0;
+								tempHitObject.index = 0;
+								tempHitObject.volume = 0;
+								tempHitObject.useDefaultHitSound = true;
+							}
 						}
 						else if(typeInBinary[3] == '1'){
 							tempHitObject.hitSound = std::stoi(tempVector[4]);
@@ -305,18 +329,27 @@ GameFile Parser::parse(std::string filename){
 
 							tempHitObject.endTime = std::stoi(tempVector[5]);
 
-							std::vector<std::string> tempVectorHitSample;
-							tempVectorHitSample = parseSeperatedLists(tempVector[6], ':');
+							if(tempVector.size() > 6){
+								std::vector<std::string> tempVectorHitSample;
+								tempVectorHitSample = parseSeperatedLists(tempVector[6], ':');
 
-							tempHitObject.normalSet = std::stoi(tempVectorHitSample[0]);
-							tempHitObject.additionSet = std::stoi(tempVectorHitSample[1]);
-							tempHitObject.index = std::stoi(tempVectorHitSample[2]);
-							tempHitObject.volume = std::stoi(tempVectorHitSample[3]);
-							if(tempVectorHitSample.size() > 4){
-								tempHitObject.filename = tempVectorHitSample[4];
-								tempHitObject.useDefaultHitSound = false;
+								tempHitObject.normalSet = std::stoi(tempVectorHitSample[0]);
+								tempHitObject.additionSet = std::stoi(tempVectorHitSample[1]);
+								tempHitObject.index = std::stoi(tempVectorHitSample[2]);
+								tempHitObject.volume = std::stoi(tempVectorHitSample[3]);
+								if(tempVectorHitSample.size() > 4){
+									tempHitObject.filename = tempVectorHitSample[4];
+									tempHitObject.useDefaultHitSound = false;
+								}
+								else tempHitObject.useDefaultHitSound = true;
 							}
-							else tempHitObject.useDefaultHitSound = true;
+							else {
+								tempHitObject.normalSet = 0;
+								tempHitObject.additionSet = 0;
+								tempHitObject.index = 0;
+								tempHitObject.volume = 0;
+								tempHitObject.useDefaultHitSound = true;
+							}
 						}
 						gameFile.hitObjects.push_back(tempHitObject);
 					}
