@@ -61,3 +61,18 @@ class Circle : public HitObject{
     private:
 
 };
+
+class Slider : public HitObject{
+    public:
+        Slider(HitObjectData data);
+        void init() override; 
+        void render() override;
+        void render_combo() override;
+        void update() override;
+        void dead_update() override;
+        void dead_render() override;
+    private:
+        std::vector<std::pair<int,int> > edgePoints; 
+        std::vector<std::pair<int,int> > renderPoints; 
+
+};

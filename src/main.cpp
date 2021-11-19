@@ -2,7 +2,7 @@
 
 int main(){
     GameManager *gameManager = GameManager::getInstance();
-    gameManager->loadGame("chekibreki.osu");
+    gameManager->loadGame("swing.osu");
     gameManager->run();
     return 0;
 }

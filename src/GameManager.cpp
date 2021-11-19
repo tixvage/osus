@@ -51,10 +51,14 @@ void GameManager::update(){
 	currentTime = GetMusicTimePlayed(backgroundMusic);
 	//currentTime = GetTime();
 	int size = gameFile.hitObjects.size();
+	//lmao eren agla burasi 0 elemanli arrayda -1. elemani almamak icin var zort
+	
 	for(int i = size-1; i >= 0; i--){
 		if(gameFile.hitObjects[i].time - gameFile.preempt <= currentTime*1000){
 			//spawn Circle
+
 			spawnHitObject(gameFile.hitObjects[i]);
+			//lmao eren agla burasi 0 elemanli arrayda -1. elemani almamak icin var zort
 			if(objects[objects.size()-1]->data.startingACombo){
 				currentComboIndex++;
 				if(gameFile.comboColours.size()) currentComboIndex = (currentComboIndex + objects[objects.size()-1]->data.skipComboColours) % gameFile.comboColours.size();
@@ -99,7 +103,7 @@ void GameManager::update(){
 			objects[i]->update();
 		}
 	}
-
+	
 	//dead animations
 	for(int i = 0; i < dead_objects.size(); i++){
 		dead_objects[i]->dead_update();
@@ -176,8 +180,24 @@ void GameManager::loadGame(std::string filename){
 }
 
 void GameManager::spawnHitObject(HitObjectData data){
-	Circle *temp = new Circle(data);
-	objects.push_back(temp);
+	HitObject *temp;
+	if(data.type == 1){
+		temp = new Circle(data);
+		objects.push_back(temp);
+	}
+	else if(data.type == 2){
+		temp = new Slider(data);
+		objects.push_back(temp);
+
+	}
+	else if(data.type == 3){
+		temp = new Circle(data);
+		objects.push_back(temp);
+	}
+	else {
+		temp = new Circle(data);
+		objects.push_back(temp);
+	}
 }
 
 void GameManager::destroyHitObject(){

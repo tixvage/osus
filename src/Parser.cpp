@@ -249,6 +249,7 @@ GameFile Parser::parse(std::string filename){
 						/*std::cout << typeInBinary;
 						std::cout << std::endl;*/
 						if(typeInBinary[0] == '1'){
+							tempHitObject.type = 1;
 							tempHitObject.hitSound = std::stoi(tempVector[4]);
 							tempHitObject.startingACombo = typeInBinary[2] == '1';
 							tempHitObject.skipComboColours = int(typeInBinary[4] == '1') + int(typeInBinary[5] == '1') * 2 + int(typeInBinary[6] == '1') * 4;
@@ -277,6 +278,7 @@ GameFile Parser::parse(std::string filename){
 
 						}
 						else if(typeInBinary[1] == '1'){
+							tempHitObject.type = 2;
 							tempHitObject.hitSound = std::stoi(tempVector[4]);
 							tempHitObject.startingACombo = typeInBinary[2] == '1';
 							tempHitObject.skipComboColours = int(typeInBinary[4] == '1') + int(typeInBinary[5] == '1') * 2 + int(typeInBinary[6] == '1') * 4;
@@ -335,6 +337,7 @@ GameFile Parser::parse(std::string filename){
 							}
 						}
 						else if(typeInBinary[3] == '1'){
+							tempHitObject.type = 3;
 							tempHitObject.hitSound = std::stoi(tempVector[4]);
 							tempHitObject.startingACombo = typeInBinary[2] == '1';
 							tempHitObject.skipComboColours = int(typeInBinary[4] == '1') + int(typeInBinary[5] == '1') * 2 + int(typeInBinary[6] == '1') * 4;
