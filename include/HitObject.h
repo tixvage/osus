@@ -26,8 +26,10 @@ struct HitObjectData{
     int volume;
     std::string filename;
     bool startingACombo;
-    int skipComboColours;
+    int skipComboColours = 0;
+    int comboNumber;
     bool useDefaultHitSound;
+    std::vector<int> colour;
 };
 
 class HitObject{
@@ -37,6 +39,7 @@ class HitObject{
         ~HitObject() = default;
         virtual void init(){}
         virtual void render(){}
+        virtual void render_combo(){}
         virtual void update(){}
         virtual void dead_update(){}
         virtual void dead_render(){}
@@ -51,6 +54,7 @@ class Circle : public HitObject{
         Circle(HitObjectData data);
         void init() override; 
         void render() override;
+        void render_combo() override;
         void update() override;
         void dead_update() override;
         void dead_render() override;

@@ -20,9 +20,18 @@ class GameManager{
 		Texture2D hit50;
 		Texture2D hit100;
 		Texture2D hit300;
+		
+		Texture2D numbers[10];
+
 		Music backgroundMusic;
 
 		double currentTime;
+		int combo = 1;
+		int clickCombo = 0;
+		Color comboColour;
+
+		int currentComboIndex = 0;
+
 		GameFile gameFile;
 		Parser parser;
 		std::vector<HitObject*> objects;

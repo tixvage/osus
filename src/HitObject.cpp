@@ -27,7 +27,10 @@ void Circle::render(){
     float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
     if (approachScale <= 1) approachScale = 1;
     float clampedFade = (gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in;
-    DrawTextureEx(gm->hitCircle, Vector2{x,y},0,1, Fade(PINK, clampedFade));
+    if(data.colour.size() > 2) DrawTextureEx(gm->hitCircle, Vector2{x,y},0,1, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
+    else DrawTextureEx(gm->hitCircle, Vector2{x,y},0,1, Fade(PINK, clampedFade));
+    //DrawTextEx(GetFontDefault(),(std::to_string(data.comboNumber)).c_str(), Vector2{data.x*2,data.y*2},20,3,Fade(WHITE, clampedFade));
+    render_combo();
     DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*2-gm->hitCircleOverlay.width*0.5f,data.y*2-gm->hitCircleOverlay.height*0.5f},0,1, Fade(WHITE, clampedFade));
     DrawTextureEx(gm->approachCircle, Vector2{data.x*2-gm->approachCircle.width*approachScale*0.5f,data.y*2-gm->approachCircle.height*approachScale*0.5f},0,approachScale, Fade(WHITE, clampedFade));
 }
@@ -50,5 +53,24 @@ void Circle::dead_update(){
     GameManager* gm = GameManager::getInstance();
     if (data.time+200 < gm->currentTime*1000){
         gm->destroyDeadHitObject();
+    }
+}
+
+void Circle::render_combo(){
+    GameManager* gm = GameManager::getInstance();
+    float clampedFade = (gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in;
+    int digits = 1;
+    if(data.comboNumber >= 1000) digits = 4;
+    if(data.comboNumber >= 100) digits = 3;
+    if(data.comboNumber >= 10) digits = 2;
+    int origin = (gm->numbers[0].width + (digits - 3) * (gm->numbers[0].width - 150)) / 2;
+
+    for(int i = digits; i >= 1 ; i--){
+        int number = data.comboNumber;
+        if(i == 1) number = number % 10;
+        else if(i == 2) number = (number % 100 - number % 10)/10;
+        else if(i == 3) number = (number % 1000 - number % 100)/100;
+        else if(i == 4) number = (number % 10000 - number % 1000)/1000;
+        DrawTextureEx(gm->numbers[number], Vector2{data.x*2 - origin + (digits - i - 1) * (gm->numbers[0].width - 150), data.y*2 - gm->numbers[0].width / 2},0,1, Fade(WHITE, clampedFade));
     }
 }

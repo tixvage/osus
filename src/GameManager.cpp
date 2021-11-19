@@ -35,7 +35,10 @@ void GameManager::init(){
     hit50 = LoadTexture("../skin/hit50.png");
     hit100 = LoadTexture("../skin/hit100.png");
     hit300 = LoadTexture("../skin/hit300.png");
-    
+
+    for(int i = 0; i < 10; i++){
+    	numbers[i] = LoadTexture(("../skin/default-" + (std::to_string(i)) + ".png").c_str());
+    }
 }
 
 void GameManager::update(){
@@ -48,6 +51,14 @@ void GameManager::update(){
 		if(gameFile.hitObjects[i].time - gameFile.preempt <= currentTime*1000){
 			//spawn Circle
 			spawnHitObject(gameFile.hitObjects[i]);
+			if(objects[objects.size()-1]->data.startingACombo){
+				currentComboIndex++;
+				currentComboIndex = (currentComboIndex + objects[objects.size()-1]->data.skipComboColours) % gameFile.comboColours.size();
+				combo = 1;
+			}
+			objects[objects.size()-1]->data.colour = gameFile.comboColours[currentComboIndex];
+			objects[objects.size()-1]->data.comboNumber = combo;
+			combo++;
 			gameFile.hitObjects.pop_back();
 		}
 		//else break;

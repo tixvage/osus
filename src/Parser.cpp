@@ -198,8 +198,20 @@ GameFile Parser::parse(std::string filename){
 							continue;
 						}
 
+						
+
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
 						
+						if(subLine[0] == 'C'){
+							std::vector<int> tempColour (3);
+							std::vector<std::string> tempVectorColours;
+							tempVectorColours = parseSeperatedLists(keyValue.second, ',');
+							for(int i = 0; i < 3; i++){
+								tempColour[i] = std::stoi(tempVectorColours[i]);
+							}
+							gameFile.comboColours.push_back(tempColour);
+						}
+
 						gameFile.configColours[keyValue.first] = keyValue.second;
 					}
 				}else if(header == "HitObjects"){
