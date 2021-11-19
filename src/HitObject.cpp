@@ -1,6 +1,20 @@
 #include <HitObject.h>
 #include "GameManager.h"
 
+Vector2 getBezierPoint( Vector2* points, int numPoints, float t ) {
+    Vector2* tmp = new Vector2[numPoints];
+    memcpy(tmp, points, numPoints * sizeof(Vector2));
+    int i = numPoints - 1;
+    while (i > 0) {
+        for (int k = 0; k < i; k++)
+            tmp[k] = Vector2{tmp[k].x + t *(tmp[k+1].x - tmp[k].x),tmp[k].y + t *(tmp[k+1].y - tmp[k].y)};
+        i--;
+    }
+    Vector2 answer = tmp[0];
+    delete[] tmp;
+    return answer;
+}
+
 Circle::Circle(HitObjectData data){
     this->data = data;
     init();
@@ -86,14 +100,28 @@ Slider::Slider(HitObjectData data){
 void Slider::init(){
     GameManager* gm = GameManager::getInstance();
 
-    edgePoints.push_back(std::make_pair(data.x,data.y));
+    edgePoints.push_back(Vector2{data.x, data.y});
+
+    for(int i = 0; i < data.curvePoints.size(); i++){
+        edgePoints.push_back(Vector2{data.curvePoints[i].first, data.curvePoints[i].second});
+    }
 
     if(data.curveType == 'L'){
-        for(int i = 0; i < data.curvePoints.size(); i++){
-            edgePoints.push_back(data.curvePoints[i]);
+        for(int i = 0; i < edgePoints.size(); i++){
+            renderPoints.push_back(edgePoints[i]);
         }
     }else if(data.curveType == 'B'){
+        Vector2 edges[edgePoints.size()];
 
+        for(int i = 0; i < edgePoints.size(); i++){
+            edges[i] = edgePoints[i];
+        }
+        for(float i = 0; i <= 1; i+=0.05f){
+            Vector2 tmp = getBezierPoint(edges, edgePoints.size(), i);
+            renderPoints.push_back(tmp);
+            std::cout<<tmp.x<<" "<<tmp.y<<std::endl;
+        }
+        
     }else if(data.curveType == 'P'){
 
     }else if(data.curveType == 'C'){
@@ -118,7 +146,15 @@ void Slider::update(){
 void Slider::render(){
     GameManager* gm = GameManager::getInstance();
     //salak omer debug detected
-    if(data.curveType != 'L'){
+    if(data.curveType == 'L'){
+        for(int i = 0; i < renderPoints.size()-1; i++){
+            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
+        }
+    }else if(data.curveType == 'B'){
+        for(int i = 0; i < renderPoints.size()-1; i++){
+            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, ORANGE);
+        }
+    }else{
         float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
         if (approachScale <= 1) approachScale = 1;
         float clampedFade = (gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in;
@@ -129,10 +165,6 @@ void Slider::render(){
         DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*gm->windowScale-gm->hitCircleOverlay.width*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->hitCircleOverlay.height*0.5f*gm->windowScale/2},0,1*gm->windowScale/2, Fade(WHITE, clampedFade));
         if(data.colour.size() > 2) DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
         else DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(WHITE, clampedFade));
-    }else{
-        for(int i = 0; i < edgePoints.size()-1; i++){
-            DrawLineEx(Vector2{edgePoints[i].first, edgePoints[i].second},Vector2{edgePoints[i+1].first, edgePoints[i+1].second}, 10, WHITE);
-        }
     }
     
 }

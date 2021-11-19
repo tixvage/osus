@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <raylib.h>
+
 struct HitObjectData{
     int x;
     int y;
@@ -72,7 +74,7 @@ class Slider : public HitObject{
         void dead_update() override;
         void dead_render() override;
     private:
-        std::vector<std::pair<int,int> > edgePoints; 
-        std::vector<std::pair<int,int> > renderPoints; 
+        std::vector<Vector2> edgePoints; 
+        std::vector<Vector2> renderPoints; 
 
 };
