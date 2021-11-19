@@ -291,7 +291,7 @@ GameFile Parser::parse(std::string filename){
 							for(int i = 1; i < tempVectorCurvePoints.size(); i++){
 								std::vector<std::string> tempVectorCurvePointCords;
 								tempVectorCurvePointCords = parseSeperatedLists(tempVectorCurvePoints[i], ':');
-								tempHitObject.curvePoints.push_back(std::make_pair(std::stoi(tempVectorCurvePointCords[0]), std::stoi(tempVectorCurvePointCords[1])));
+								tempHitObject.curvePoints.push_back(std::make_pair(std::stoi(tempVectorCurvePointCords[0])+64, std::stoi(tempVectorCurvePointCords[1])+48));
 							}
 
 							tempHitObject.slides = std::stoi(tempVector[6]);
