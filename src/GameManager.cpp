@@ -75,19 +75,21 @@ void GameManager::update(){
 				
 				if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p50Final){
 					objects[i]->data.point = 0;
-					clickCombo = 0; 
+					clickCombo = 0;
 				}
 				else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p100Final){
 					objects[i]->data.point = 1;
+					score+= 50 + (50 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
 					clickCombo++;
-
 				}
 				else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p300Final){
 					objects[i]->data.point = 2;
+					score+= 100 + (100 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
 					clickCombo++;
 				}
 				else{
 					objects[i]->data.point = 3;
+					score+= 300 + (300 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
 					clickCombo++;
 				}
 				objects[i]->data.time = currentTime*1000;
@@ -166,11 +168,7 @@ void GameManager::loadGame(std::string filename){
 	float hpdrainrate = std::stof(gameFile.configDifficulty["HPDrainRate"]);
 	float circlesize = std::stof(gameFile.configDifficulty["CircleSize"]);
 	float overalldifficulty = std::stof(gameFile.configDifficulty["OverallDifficulty"]);
-
-	std::cout << gameFile.hitObjects.size() << std::endl;
-
-	difficultyMultiplier = ((hpdrainrate + circlesize + overalldifficulty + clip((float)gameFile.hitObjects.size() / (float)90.f * 8.f, 0.f, 16.f)) / 38.f * 5.f);
-	std::cout << difficultyMultiplier << std::endl;
+	difficultyMultiplier = ((hpdrainrate + circlesize + overalldifficulty + clip((float)gameFile.hitObjects.size() / GetMusicTimeLength(backgroundMusic) * 8.f, 0.f, 16.f)) / 38.f * 5.f);
 }
 
 void GameManager::spawnHitObject(HitObjectData data){
