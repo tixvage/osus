@@ -9,8 +9,10 @@ int main(){
 
 /*
 
-204,127,41984,6,0,L|187:297,1,160
-177,242,611  ,6,0,L|291:237,1,100,6|2,1:2|0:0,0:0:0:0:
+
+x  ,y  ,time ,type,hitSound,curveType|curvePoints,slides,length,edgeSounds,edgeSets,hitSample
+204,127,41984,6   ,0       ,L        |187:297    ,1     ,160
+177,242,611  ,6   ,0       ,L        |291:237    ,1     ,10,   ,6|2       ,1:2|0:0 ,0:0:0:0:
 
 
 
