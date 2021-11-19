@@ -29,7 +29,8 @@ class GameManager{
 		int combo = 1;
 		int clickCombo = 0;
 		Color comboColour;
-
+		int score = 0;
+		float difficultyMultiplier = 0;
 		int currentComboIndex = 0;
 
 		GameFile gameFile;

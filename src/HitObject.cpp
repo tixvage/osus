@@ -18,6 +18,8 @@ void Circle::update(){
     if(gm->currentTime*1000 > data.time + gm->gameFile.p50Final){
         data.time = gm->currentTime*1000;
         data.point = 0;
+        gm->clickCombo = 0;
+
         gm->destroyHitObject();
     }
 }
@@ -61,8 +63,8 @@ void Circle::render_combo(){
     float clampedFade = (gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in;
     int digits = 1;
     if(data.comboNumber >= 1000) digits = 4;
-    if(data.comboNumber >= 100) digits = 3;
-    if(data.comboNumber >= 10) digits = 2;
+    else if(data.comboNumber >= 100) digits = 3;
+    else if(data.comboNumber >= 10) digits = 2;
     int origin = (gm->numbers[0].width + (digits - 3) * (gm->numbers[0].width - 150)) / 2;
 
     for(int i = digits; i >= 1 ; i--){
@@ -71,6 +73,6 @@ void Circle::render_combo(){
         else if(i == 2) number = (number % 100 - number % 10)/10;
         else if(i == 3) number = (number % 1000 - number % 100)/100;
         else if(i == 4) number = (number % 10000 - number % 1000)/1000;
-        DrawTextureEx(gm->numbers[number], Vector2{data.x*2 - origin + (digits - i - 1) * (gm->numbers[0].width - 150), data.y*2 - gm->numbers[0].width / 2},0,1, Fade(WHITE, clampedFade));
+        DrawTextureEx(gm->numbers[number], Vector2{(float)data.x*2 - origin + (digits - i - 1) * (gm->numbers[0].width - 150), (float)data.y*2 - gm->numbers[0].width / 2},0,1, Fade(WHITE, clampedFade));
     }
 }
