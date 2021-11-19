@@ -2,7 +2,7 @@
 
 int main(){
     GameManager *gameManager = GameManager::getInstance();
-    gameManager->loadGame("nottakumi.osu");
+    gameManager->loadGame("BeautifulWorld.osu");
     gameManager->run();
     return 0;
 }
