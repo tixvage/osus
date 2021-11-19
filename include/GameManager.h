@@ -11,7 +11,7 @@ class GameManager{
 		void destroyHitObject();
 		void destroyDeadHitObject();
 
-		float windowScale = 1.0f;
+		float windowScale = 2.0f;
 
 		Texture2D hitCircle;
 		Texture2D hitCircleOverlay;

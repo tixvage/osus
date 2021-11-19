@@ -57,10 +57,10 @@ void GameManager::update(){
 			spawnHitObject(gameFile.hitObjects[i]);
 			if(objects[objects.size()-1]->data.startingACombo){
 				currentComboIndex++;
-				currentComboIndex = (currentComboIndex + objects[objects.size()-1]->data.skipComboColours) % gameFile.comboColours.size();
+				if(gameFile.comboColours.size()) currentComboIndex = (currentComboIndex + objects[objects.size()-1]->data.skipComboColours) % gameFile.comboColours.size();
 				combo = 1;
 			}
-			objects[objects.size()-1]->data.colour = gameFile.comboColours[currentComboIndex];
+			if(gameFile.comboColours.size()) objects[objects.size()-1]->data.colour = gameFile.comboColours[currentComboIndex];
 			objects[objects.size()-1]->data.comboNumber = combo;
 			combo++;
 			gameFile.hitObjects.pop_back();
