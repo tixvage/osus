@@ -1,5 +1,15 @@
 #include <HitObject.h>
 #include "GameManager.h"
+#include <math.h>
+
+int orientation(Vector2 p1, Vector2 p2, Vector2 p3)
+{
+    int val = (p2.y - p1.y) * (p3.x - p2.x) -
+              (p2.x - p1.x) * (p3.y - p2.y);
+
+ 
+    return (val > 0)? false: true; // clock or counterclock wise
+}
 
 Vector2 getBezierPoint( Vector2* points, int numPoints, float t ) {
     Vector2* tmp = new Vector2[numPoints];
@@ -13,6 +23,30 @@ Vector2 getBezierPoint( Vector2* points, int numPoints, float t ) {
     Vector2 answer = tmp[0];
     delete[] tmp;
     return answer;
+}
+
+std::pair<Vector2, int> getPerfectCircle(Vector2 p1, Vector2 p2, Vector2 p3) {
+    int x1 = p1.x;
+    int y1 = p1.y;
+    int x2 = p2.x;
+    int y2 = p2.y;
+    int x3 = p3.x;
+    int y3 = p3.y;
+
+    int a = x1 * (y2 - y3) - y1 * (x2 - x3) + x2 * y3 - x3 * y2;
+
+    int b = (x1 * x1 + y1 * y1) * (y3 - y2) 
+            + (x2 * x2 + y2 * y2) * (y1 - y3)
+            + (x3 * x3 + y3 * y3) * (y2 - y1);
+
+    int c = (x1 * x1 + y1 * y1) * (x2 - x3) 
+            + (x2 * x2 + y2 * y2) * (x3 - x1) 
+            + (x3 * x3 + y3 * y3) * (x1 - x2);
+
+    int x = -b / (2 * a);
+    int y = -c / (2 * a);
+
+    return std::make_pair(Vector2{x,y}, sqrt((x - x1) * (x - x1) + (y - y1) *(y - y1)));
 }
 
 Circle::Circle(HitObjectData data){
@@ -116,14 +150,52 @@ void Slider::init(){
         for(int i = 0; i < edgePoints.size(); i++){
             edges[i] = edgePoints[i];
         }
+
         for(float i = 0; i <= 1; i+=0.05f){
             Vector2 tmp = getBezierPoint(edges, edgePoints.size(), i);
             renderPoints.push_back(tmp);
-            std::cout<<tmp.x<<" "<<tmp.y<<std::endl;
         }
         
     }else if(data.curveType == 'P'){
+        if(edgePoints.size() > 2){
 
+            /*
+                I literally took a fucking 3 hour trigonometry lesson to get this shit working
+            */
+
+            std::pair<Vector2, int> circleData = getPerfectCircle(edgePoints[0], edgePoints[1], edgePoints[2]);
+
+            Vector2 center = circleData.first;
+
+            int radius = circleData.second;
+
+            // Some math shit
+            float degree1 = atan2(edgePoints[0].y - center.y , edgePoints[0].x - center.x) * RAD2DEG;
+            float degree2 = atan2(edgePoints[1].y - center.y , edgePoints[1].x - center.x) * RAD2DEG;
+            float degree3 = atan2(edgePoints[2].y - center.y , edgePoints[2].x - center.x) * RAD2DEG;
+
+            bool clockwise = !orientation(edgePoints[0], edgePoints[1], edgePoints[2]);
+            
+            if(clockwise){
+                for(float i = degree1; i >= degree3; i--){
+                    Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
+                    renderPoints.push_back(tempPoint);
+                }
+            }else{
+                for(float i = degree3; i >= degree1; i--){
+                    Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
+                    renderPoints.push_back(tempPoint);
+                }
+            }
+        }else{
+
+            for(int i = 0; i < edgePoints.size(); i++){
+                renderPoints.push_back(edgePoints[i]);
+            }
+
+            data.curveType = 'L';
+        }
+        
     }else if(data.curveType == 'C'){
 
     }else{
@@ -153,6 +225,10 @@ void Slider::render(){
     }else if(data.curveType == 'B'){
         for(int i = 0; i < renderPoints.size()-1; i++){
             DrawLineEx(renderPoints[i],renderPoints[i+1], 3, ORANGE);
+        }
+    }else if(data.curveType == 'P'){
+        for(int i = 0; i < renderPoints.size()-1; i++){
+            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, RED);
         }
     }else{
         float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
