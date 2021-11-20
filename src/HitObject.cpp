@@ -1,6 +1,7 @@
 #include <HitObject.h>
 #include "GameManager.h"
 #include <math.h>
+#include <algorithm>
 
 int orientation(Vector2 p1, Vector2 p2, Vector2 p3)
 {
@@ -161,6 +162,7 @@ void Slider::init(){
 
             /*
                 I literally took a fucking 3 hour trigonometry lesson to get this shit working
+                UPDATE : THIS SHIT ISNT WORKING
             */
 
             std::pair<Vector2, int> circleData = getPerfectCircle(edgePoints[0], edgePoints[1], edgePoints[2]);
@@ -185,6 +187,7 @@ void Slider::init(){
                 for(float i = degree3; i >= degree1; i--){
                     Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
                     renderPoints.push_back(tempPoint);
+                    std::reverse(renderPoints.begin(), renderPoints.end());
                 }
             }
         }else{
