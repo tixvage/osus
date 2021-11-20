@@ -140,7 +140,7 @@ void Slider::init(){
     for(int i = 0; i < data.curvePoints.size(); i++){
         edgePoints.push_back(Vector2{data.curvePoints[i].first, data.curvePoints[i].second});
     }
-
+    //std::cout << edgePoints.size() << std::endl;
     if(data.curveType == 'L'){
         for(int i = 0; i < edgePoints.size(); i++){
             renderPoints.push_back(edgePoints[i]);
@@ -158,46 +158,60 @@ void Slider::init(){
         }
         
     }else if(data.curveType == 'P'){
-        if(edgePoints.size() > 2){
 
-            /*
-                I literally took a fucking 3 hour trigonometry lesson to get this shit working
-                UPDATE : THIS SHIT ISNT WORKING
-            */
+        /*
+            I literally took a fucking 3 hour trigonometry lesson to get this shit working
+            UPDATE : THIS SHIT ISNT WORKING
+        */
 
-            std::pair<Vector2, int> circleData = getPerfectCircle(edgePoints[0], edgePoints[1], edgePoints[2]);
+        std::pair<Vector2, int> circleData = getPerfectCircle(edgePoints[0], edgePoints[1], edgePoints[2]);
 
-            Vector2 center = circleData.first;
+        Vector2 center = circleData.first;
 
-            int radius = circleData.second;
+        int radius = circleData.second;
 
-            // Some math shit
-            float degree1 = atan2(edgePoints[0].y - center.y , edgePoints[0].x - center.x) * RAD2DEG;
-            float degree2 = atan2(edgePoints[1].y - center.y , edgePoints[1].x - center.x) * RAD2DEG;
-            float degree3 = atan2(edgePoints[2].y - center.y , edgePoints[2].x - center.x) * RAD2DEG;
+        // Some math shit
+        float degree1 = atan2(edgePoints[0].y - center.y , edgePoints[0].x - center.x) * RAD2DEG;
+        float degree2 = atan2(edgePoints[1].y - center.y , edgePoints[1].x - center.x) * RAD2DEG;
+        float degree3 = atan2(edgePoints[2].y - center.y , edgePoints[2].x - center.x) * RAD2DEG;
 
-            bool clockwise = !orientation(edgePoints[0], edgePoints[1], edgePoints[2]);
-            
-            if(clockwise){
-                for(float i = degree1; i >= degree3; i--){
-                    Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
-                    renderPoints.push_back(tempPoint);
-                }
-            }else{
-                for(float i = degree3; i >= degree1; i--){
-                    Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
-                    renderPoints.push_back(tempPoint);
-                    std::reverse(renderPoints.begin(), renderPoints.end());
-                }
+        degree1 = degree1 < 0 ? degree1 + 360 : degree1;
+        degree2 = degree2 < 0 ? degree2 + 360 : degree2;
+        degree3 = degree3 < 0 ? degree3 + 360 : degree3;
+
+        bool clockwise = !orientation(edgePoints[0], edgePoints[1], edgePoints[2]);
+        
+        std::cout << !orientation(edgePoints[0], edgePoints[1], edgePoints[2]) << " " << degree1 << " " << degree3 << " ";
+
+        //eren pls fix this failure of a code...
+
+        //eren sen cidden bunun icin aglion mu
+        if(clockwise){
+
+            degree1 = degree1 < degree3 ? degree1 + 360 : degree1;
+            degree2 = degree2 < degree3 ? degree2 + 360 : degree2;
+
+            for(float i = degree1; i >= degree3; i--){
+                Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
+                renderPoints.push_back(tempPoint);
+                std::cout << "+";
             }
+
         }else{
 
-            for(int i = 0; i < edgePoints.size(); i++){
-                renderPoints.push_back(edgePoints[i]);
+            degree2 = degree2 < degree1 ? degree2 + 360 : degree2;
+            degree3 = degree3 < degree1 ? degree3 + 360 : degree3;
+
+            for(float i = degree3; i >= degree1; i--){
+                Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
+                renderPoints.push_back(tempPoint);
+                std::cout << "-";
             }
 
-            data.curveType = 'L';
+            std::reverse(renderPoints.begin(), renderPoints.end());
         }
+        std::cout << std::endl << renderPoints.size() << std::endl;
+
         
     }else if(data.curveType == 'C'){
 
