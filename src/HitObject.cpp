@@ -224,12 +224,13 @@ void Slider::render(){
         }
     }else if(data.curveType == 'B'){
         for(int i = 0; i < renderPoints.size()-1; i++){
-            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, ORANGE);
+            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : ORANGE);
         }
     }else if(data.curveType == 'P'){
-        for(int i = 0; i < renderPoints.size()-1; i++){
-            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, RED);
-        }
+        if(renderPoints.size() > 0)
+            for(int i = 0; i < renderPoints.size()-1; i++){
+                DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
+            }
     }else{
         float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
         if (approachScale <= 1) approachScale = 1;
