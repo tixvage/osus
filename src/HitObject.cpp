@@ -263,10 +263,15 @@ void Slider::update(){
     GameManager* gm = GameManager::getInstance();
 
     position = (gm->currentTime * 1000.f - (float)data.time) / (333.33f);// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
+    position *= 100;
+    if(gm->currentTime*1000 - data.time > 0){
+        if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * 333.33f)) % 2 == 1) position = (int)data.length - ((int)position % (int)data.length + 1); 
+        else position = (int)position % (int)data.length + 1; 
+    }
     position = std::max(0.f,position);
-    std::cout << static_cast<int>(position * 100) << " " << data.length<< std::endl;
+    std::cout << static_cast<int>(position) << " " << data.length << std::endl;
     
-    if(gm->currentTime*1000 > data.time + (data.length/100) * 333.33f){
+    if(gm->currentTime*1000 > data.time + (data.length/100) * 333.33f * data.slides){
         data.time = gm->currentTime*1000;
         data.point = 0;
         gm->clickCombo = 0;
@@ -280,43 +285,52 @@ void Slider::render(){
     //salak omer debug detected
     if(data.curveType == 'L'){
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-            DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
+            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,WHITE);
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
         }
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-            DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
+            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 25*gm->windowScale,Color{32,32,32,255});
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
         }
-        int calPos = position*100;
+        int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
-        DrawCircle(renderPoints[calPos].x, renderPoints[calPos].y, 10, BLUE);
+        
+        if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, 255));
+        else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, 255));      
+        
     }else if(data.curveType == 'B'){
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-            DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
+            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,WHITE);
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : ORANGE);
         }
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-            DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
+            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 25*gm->windowScale,Color{32,32,32,255});
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
         }
 
-        int calPos = position*100;
+        int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
-        DrawCircle(renderPoints[calPos].x, renderPoints[calPos].y, 10, BLUE);
+        
+        if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, 255));
+        else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, 255));      
+        
     }else if(data.curveType == 'P'){
         if(renderPoints.size() > 0){
             for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-                DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
+                DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,WHITE);
                 //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
             }
             for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-                DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
+                DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 25*gm->windowScale,Color{32,32,32,255});
                 //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
             }
 
-        int calPos = position*100;
-        calPos = std::min(calPos, static_cast<int>/*yes c++*/(renderPoints.size()-1));
-        DrawCircle(renderPoints[calPos].x, renderPoints[calPos].y, 10, BLUE);        }
+            int calPos = position;
+            calPos = std::min(calPos, static_cast<int>/*yes c++*/(renderPoints.size()-1));
+        
+            if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, 255));
+            else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, 255));      
+        }
     }else{
         float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
         if (approachScale <= 1) approachScale = 1;

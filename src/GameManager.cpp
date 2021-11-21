@@ -39,6 +39,7 @@ void GameManager::init(){
     hit50 = LoadTexture("../skin/hit50.png");
     hit100 = LoadTexture("../skin/hit100.png");
     hit300 = LoadTexture("../skin/hit300.png");
+    sliderb = LoadTexture("../skin/sliderb0.png");
 
     for(int i = 0; i < 10; i++){
     	numbers[i] = LoadTexture(("../skin/default-" + (std::to_string(i)) + ".png").c_str());

@@ -22,6 +22,7 @@ class GameManager{
 		Texture2D hit50;
 		Texture2D hit100;
 		Texture2D hit300;
+		Texture2D sliderb;
 		
 		Texture2D numbers[10];
 
