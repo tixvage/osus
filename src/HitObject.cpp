@@ -141,10 +141,11 @@ void Slider::init(){
 
     float currentResolution = 0;
 
+    float lengthScale, totalLength = 0;
+
     for(int i = 0; i < data.curvePoints.size(); i++){
         edgePoints.push_back(Vector2{data.curvePoints[i].first, data.curvePoints[i].second});
     }
-    //std::cout << edgePoints.size() << std::endl;
     if(data.curveType == 'L'){
         std::vector<float> lineLengths;
 
@@ -154,8 +155,10 @@ void Slider::init(){
 
         for(int i = 0; i < lineLengths.size(); i++){
             std::cout << lineLengths[i] << " ";
+            totalLength+=lineLengths[i];
         }
-        std::cout << " - > " << resolution << std::endl;
+        lengthScale = data.length/totalLength;
+        std::cout << " -> " << resolution << std::endl;
         for(int i = 0; i < edgePoints.size(); i++){
             renderPoints.push_back(edgePoints[i]);
         }
@@ -236,7 +239,7 @@ void Slider::init(){
     }else if(data.curveType == 'C'){
 
     }else{
-        std::__throw_invalid_argument("What The FUck? Invalid Slider Type");
+        std::__throw_invalid_argument("What The Fuck? Invalid Slider Type");
     }
     std::cout << resolution << " " << renderPoints.size() << " " << data.curveType <<std::endl;
 }
@@ -258,15 +261,18 @@ void Slider::render(){
     //salak omer debug detected
     if(data.curveType == 'L'){
         for(int i = 0; i < renderPoints.size()-1; i++){
+            DrawCircle(renderPoints[i].x, renderPoints[i].y, 20,BLUE);
             DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
         }
     }else if(data.curveType == 'B'){
         for(int i = 0; i < renderPoints.size()-1; i++){
+            DrawCircle(renderPoints[i].x, renderPoints[i].y, 20,BLUE);
             DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : ORANGE);
         }
     }else if(data.curveType == 'P'){
         if(renderPoints.size() > 0)
             for(int i = 0; i < renderPoints.size()-1; i++){
+            DrawCircle(renderPoints[i].x, renderPoints[i].y, 20,BLUE);
                 DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
             }
     }else{
