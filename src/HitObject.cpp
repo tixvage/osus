@@ -285,7 +285,7 @@ void Slider::render(){
     //salak omer debug detected
     if(data.curveType == 'L'){
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,WHITE);
+            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,Color{255,255,255,255});
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
         }
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
@@ -300,7 +300,7 @@ void Slider::render(){
         
     }else if(data.curveType == 'B'){
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,WHITE);
+            DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,Color{255,255,255,255});
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : ORANGE);
         }
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
@@ -317,7 +317,7 @@ void Slider::render(){
     }else if(data.curveType == 'P'){
         if(renderPoints.size() > 0){
             for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-                DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,WHITE);
+                DrawCircle(renderPoints[i].x*gm->windowScale, renderPoints[i].y*gm->windowScale, 28*gm->windowScale,Color{255,255,255,255});
                 //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
             }
             for(int i = 0; i < renderPoints.size(); i+=gm->skip){
