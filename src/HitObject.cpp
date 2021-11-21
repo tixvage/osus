@@ -256,13 +256,17 @@ void Slider::init(){
     }else{
         std::__throw_invalid_argument("What The Fuck? Invalid Slider Type");
     }
-    std::cout << resolution << " " << renderPoints.size() << " " << data.curveType <<std::endl;
+    //debuggink
 }
 
 void Slider::update(){
     GameManager* gm = GameManager::getInstance();
 
-    if(gm->currentTime*1000 > data.time + gm->gameFile.p50Final){
+    position = (gm->currentTime * 1000.f - (float)data.time) / (333.33f);// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
+    position = std::max(0.f,position);
+    std::cout << static_cast<int>(position * 100) << " " << data.length<< std::endl;
+    
+    if(gm->currentTime*1000 > data.time + (data.length/100) * 333.33f){
         data.time = gm->currentTime*1000;
         data.point = 0;
         gm->clickCombo = 0;
@@ -283,6 +287,9 @@ void Slider::render(){
             DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
         }
+        int calPos = position*100;
+        calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
+        DrawCircle(renderPoints[calPos].x, renderPoints[calPos].y, 10, BLUE);
     }else if(data.curveType == 'B'){
         for(int i = 0; i < renderPoints.size(); i+=gm->skip){
             DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
@@ -292,8 +299,12 @@ void Slider::render(){
             DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
             //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
         }
+
+        int calPos = position*100;
+        calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
+        DrawCircle(renderPoints[calPos].x, renderPoints[calPos].y, 10, BLUE);
     }else if(data.curveType == 'P'){
-        if(renderPoints.size() > 0)
+        if(renderPoints.size() > 0){
             for(int i = 0; i < renderPoints.size(); i+=gm->skip){
                 DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
                 //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
@@ -302,6 +313,10 @@ void Slider::render(){
                 DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
                 //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
             }
+
+        int calPos = position*100;
+        calPos = std::min(calPos, static_cast<int>/*yes c++*/(renderPoints.size()-1));
+        DrawCircle(renderPoints[calPos].x, renderPoints[calPos].y, 10, BLUE);        }
     }else{
         float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
         if (approachScale <= 1) approachScale = 1;

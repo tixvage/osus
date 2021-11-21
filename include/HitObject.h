@@ -76,5 +76,5 @@ class Slider : public HitObject{
     private:
         std::vector<Vector2> edgePoints; 
         std::vector<Vector2> renderPoints; 
-
+        float position = 0;
 };

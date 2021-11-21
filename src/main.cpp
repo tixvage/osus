@@ -2,7 +2,7 @@
 
 int main(){
     GameManager *gameManager = GameManager::getInstance();
-    gameManager->loadGame("linearcurve.osu");
+    gameManager->loadGame("megolonavya.osu");
     gameManager->run();
     return 0;
 }
