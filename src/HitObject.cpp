@@ -137,11 +137,25 @@ void Slider::init(){
 
     edgePoints.push_back(Vector2{data.x, data.y});
 
+    float resolution = data.length;
+
+    float currentResolution = 0;
+
     for(int i = 0; i < data.curvePoints.size(); i++){
         edgePoints.push_back(Vector2{data.curvePoints[i].first, data.curvePoints[i].second});
     }
     //std::cout << edgePoints.size() << std::endl;
     if(data.curveType == 'L'){
+        std::vector<float> lineLengths;
+
+        for(int i = 0; i < edgePoints.size()-1; i++){
+            lineLengths.push_back(std::sqrt(std::pow(std::abs(edgePoints[i].x - edgePoints[i+1].x),2)+std::pow(std::abs(edgePoints[i].y - edgePoints[i+1].y),2)));
+        }
+
+        for(int i = 0; i < lineLengths.size(); i++){
+            std::cout << lineLengths[i] << " ";
+        }
+        std::cout << " - > " << resolution << std::endl;
         for(int i = 0; i < edgePoints.size(); i++){
             renderPoints.push_back(edgePoints[i]);
         }
@@ -152,7 +166,9 @@ void Slider::init(){
             edges[i] = edgePoints[i];
         }
 
-        for(float i = 0; i <= 1; i+=0.05f){
+        for(float i = 0; i < 1 + 1.0f / resolution; i += 1.0f / resolution){
+            if(currentResolution > resolution) break;
+            currentResolution++;
             Vector2 tmp = getBezierPoint(edges, edgePoints.size(), i);
             renderPoints.push_back(tmp);
         }
@@ -181,7 +197,7 @@ void Slider::init(){
 
         bool clockwise = !orientation(edgePoints[0], edgePoints[1], edgePoints[2]);
         
-        std::cout << !orientation(edgePoints[0], edgePoints[1], edgePoints[2]) << " " << degree1 << " " << degree3 << " ";
+        //std::cout << !orientation(edgePoints[0], edgePoints[1], edgePoints[2]) << " " << degree1 << " " << degree3 << " ";
 
         //eren pls fix this failure of a code...
 
@@ -191,10 +207,12 @@ void Slider::init(){
             degree1 = degree1 < degree3 ? degree1 + 360 : degree1;
             degree2 = degree2 < degree3 ? degree2 + 360 : degree2;
 
-            for(float i = degree1; i >= degree3; i--){
+            for(float i = degree1; i > degree3 - (degree1-degree3)/resolution; i-= (degree1-degree3)/resolution){
+                if(currentResolution > resolution) break;
+                currentResolution++;
                 Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
                 renderPoints.push_back(tempPoint);
-                std::cout << "+";
+                //std::cout << "+";
             }
 
         }else{
@@ -202,15 +220,17 @@ void Slider::init(){
             degree2 = degree2 < degree1 ? degree2 + 360 : degree2;
             degree3 = degree3 < degree1 ? degree3 + 360 : degree3;
 
-            for(float i = degree3; i >= degree1; i--){
+            for(float i = degree3; i > degree1 - (degree3-degree1)/resolution; i -= (degree3-degree1)/resolution){
+                if(currentResolution > resolution) break;
+                currentResolution++;
                 Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
                 renderPoints.push_back(tempPoint);
-                std::cout << "-";
+                //std::cout << "-";
             }
 
             std::reverse(renderPoints.begin(), renderPoints.end());
         }
-        std::cout << std::endl << renderPoints.size() << std::endl;
+        
 
         
     }else if(data.curveType == 'C'){
@@ -218,6 +238,7 @@ void Slider::init(){
     }else{
         std::__throw_invalid_argument("What The FUck? Invalid Slider Type");
     }
+    std::cout << resolution << " " << renderPoints.size() << " " << data.curveType <<std::endl;
 }
 
 void Slider::update(){
