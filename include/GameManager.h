@@ -12,7 +12,7 @@ class GameManager{
 		void destroyDeadHitObject();
 
 		float windowScale = 1.0f;
-
+		int skip = 4;
 		Texture2D hitCircle;
 		Texture2D hitCircleOverlay;
 		Texture2D approachCircle;

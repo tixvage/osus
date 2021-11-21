@@ -154,14 +154,29 @@ void Slider::init(){
         }
 
         for(int i = 0; i < lineLengths.size(); i++){
-            std::cout << lineLengths[i] << " ";
+            //std::cout << lineLengths[i] << " ";
             totalLength+=lineLengths[i];
         }
-        lengthScale = data.length/totalLength;
-        std::cout << " -> " << resolution << std::endl;
-        for(int i = 0; i < edgePoints.size(); i++){
-            renderPoints.push_back(edgePoints[i]);
+
+        lengthScale = totalLength/data.length;
+
+        //std::cout << " -> " << lengthScale << " " << totalLength / lengthScale << std::endl;
+
+        for(int i = 0; i < edgePoints.size()-1; i++){
+            //renderPoints.push_back(edgePoints[i]);
+            for(float j = 0; j < lineLengths[i]; j += lengthScale){
+                
+                renderPoints.push_back(Vector2{edgePoints[i].x + (edgePoints[i+1].x - edgePoints[i].x)*j/lineLengths[i], edgePoints[i].y + (edgePoints[i+1].y - edgePoints[i].y)*j/lineLengths[i]});
+                //std::cout << (edgePoints[i+1].x - edgePoints[i].x)*j/lineLengths[i] << " " << (edgePoints[i+1].y - edgePoints[i].y)*j/lineLengths[i] << std::endl;
+            }
         }
+        renderPoints.push_back(edgePoints[edgePoints.size()-1]);
+
+        while(!false){
+            if(renderPoints.size()-1 <= data.length) break;
+            renderPoints.pop_back();
+        }
+
     }else if(data.curveType == 'B'){
         Vector2 edges[edgePoints.size()];
 
@@ -260,20 +275,32 @@ void Slider::render(){
     GameManager* gm = GameManager::getInstance();
     //salak omer debug detected
     if(data.curveType == 'L'){
-        for(int i = 0; i < renderPoints.size()-1; i++){
-            DrawCircle(renderPoints[i].x, renderPoints[i].y, 20,BLUE);
-            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
+        for(int i = 0; i < renderPoints.size(); i+=gm->skip){
+            DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
+            //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
+        }
+        for(int i = 0; i < renderPoints.size(); i+=gm->skip){
+            DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
+            //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
         }
     }else if(data.curveType == 'B'){
-        for(int i = 0; i < renderPoints.size()-1; i++){
-            DrawCircle(renderPoints[i].x, renderPoints[i].y, 20,BLUE);
-            DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : ORANGE);
+        for(int i = 0; i < renderPoints.size(); i+=gm->skip){
+            DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
+            //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : ORANGE);
+        }
+        for(int i = 0; i < renderPoints.size(); i+=gm->skip){
+            DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
+            //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
         }
     }else if(data.curveType == 'P'){
         if(renderPoints.size() > 0)
-            for(int i = 0; i < renderPoints.size()-1; i++){
-            DrawCircle(renderPoints[i].x, renderPoints[i].y, 20,BLUE);
-                DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
+            for(int i = 0; i < renderPoints.size(); i+=gm->skip){
+                DrawCircle(renderPoints[i].x, renderPoints[i].y, 28,WHITE);
+                //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
+            }
+            for(int i = 0; i < renderPoints.size(); i+=gm->skip){
+                DrawCircle(renderPoints[i].x, renderPoints[i].y, 25,Color{32,32,32,255});
+                //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
             }
     }else{
         float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
