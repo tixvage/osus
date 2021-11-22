@@ -40,6 +40,7 @@ class GameManager{
 		Parser parser;
 		std::vector<HitObject*> objects;
 		std::vector<HitObject*> dead_objects;
+		float clip(float value, float min, float max);
 	private:
 		static GameManager* inst_;
 		void init();

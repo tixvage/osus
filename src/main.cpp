@@ -2,7 +2,7 @@
 
 int main(){
     GameManager *gameManager = GameManager::getInstance();
-    gameManager->loadGame("megolonavya.osu");
+    gameManager->loadGame("gravitymakesthingsfall.osu");
     gameManager->run();
     return 0;
 }

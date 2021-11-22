@@ -7,7 +7,7 @@
 #include <math.h>
 
 //some weird things
-float clip(float value, float min, float max) {
+float GameManager::clip(float value, float min, float max) {
   return std::min(std::max(value,min), max);
 }
 
