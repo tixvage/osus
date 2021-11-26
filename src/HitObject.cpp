@@ -266,8 +266,8 @@ void Slider::init(){
     }
     sliderTexture = LoadRenderTexture((maxX-minX+56)*gm->windowScale, (maxY-minY+56)*gm->windowScale+gm->windowScale);
     BeginTextureMode(sliderTexture);
+    ClearBackground(BLACK);
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-        std::cout<< "lmao nub" << std::endl;
         DrawCircle((renderPoints[i].x-minX+28)*gm->windowScale, sliderTexture.texture.height + gm->windowScale - (renderPoints[i].y-minY+28)*gm->windowScale, 28*gm->windowScale,Color{200,200,200,255});
         //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
     }
@@ -289,7 +289,6 @@ void Slider::update(){
         else position = (int)position % (int)data.length + 1; 
     }
     position = std::max(0.f,position);
-    std::cout << static_cast<int>(position) << " " << data.length << std::endl;
     
     if(gm->currentTime*1000 > data.time + (data.length/100) * 333.33f * data.slides){
         data.time = gm->currentTime*1000;
@@ -302,7 +301,6 @@ void Slider::update(){
 
 void Slider::render(){
     GameManager* gm = GameManager::getInstance();
-    //salak omer debug detected
 
     if(data.curveType == 'L'){
         float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
