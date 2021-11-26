@@ -266,7 +266,7 @@ void Slider::init(){
     }
     sliderTexture = LoadRenderTexture((maxX-minX+56)*gm->windowScale, (maxY-minY+56)*gm->windowScale+gm->windowScale);
     BeginTextureMode(sliderTexture);
-    ClearBackground(BLACK);
+    ClearBackground(BLANK);
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
         DrawCircle((renderPoints[i].x-minX+28)*gm->windowScale, sliderTexture.texture.height + gm->windowScale - (renderPoints[i].y-minY+28)*gm->windowScale, 28*gm->windowScale,Color{200,200,200,255});
         //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
@@ -370,6 +370,7 @@ void Slider::dead_render(){
 void Slider::dead_update(){
     GameManager* gm = GameManager::getInstance();
     if (data.time+400 < gm->currentTime*1000){
+        UnloadRenderTexture(sliderTexture);
         gm->destroyDeadHitObject();
     }
 }
