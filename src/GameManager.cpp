@@ -72,33 +72,50 @@ void GameManager::update(){
 		}
 		//else break;
 	}
-	bool pressed = IsMouseButtonPressed(0); 
-	for(int i = 0; i < objects.size(); i++){
-		if(pressed && i == 0){
 
-			if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*windowScale,(float)objects[i]->data.y*windowScale}, 56*windowScale/2) && pressed){
-				
-				if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p50Final){
-					objects[i]->data.point = 0;
-					clickCombo = 0;
+	bool pressed = IsMouseButtonPressed(0);
+	bool down = IsMouseButtonDown(0);
+	
+	for(int i = 0; i < objects.size(); i++){
+		if(i == 0){
+			if (pressed){
+				if (objects[i]->data.type != 2){
+					if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*windowScale,(float)objects[i]->data.y*windowScale}, 56*windowScale/2) && pressed){
+						
+						if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p50Final){
+							objects[i]->data.point = 0;
+							clickCombo = 0;
+						}
+						else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p100Final){
+							objects[i]->data.point = 1;
+							score+= 50 + (50 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
+							clickCombo++;
+						}
+						else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p300Final){
+							objects[i]->data.point = 2;
+							score+= 100 + (100 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
+							clickCombo++;
+						}
+						else{
+							objects[i]->data.point = 3;
+							score+= 300 + (300 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
+							clickCombo++;
+						}
+						objects[i]->data.time = currentTime*1000;
+						destroyHitObject();
+					}
 				}
-				else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p100Final){
-					objects[i]->data.point = 1;
-					score+= 50 + (50 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
-					clickCombo++;
+			}
+			else if(down){
+				if(auto slider = dynamic_cast<Slider*>(objects[i])){
+					if (slider->is_colliding){
+						std::cout << "LETS GOO\n";
+					}
 				}
-				else if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p300Final){
-					objects[i]->data.point = 2;
-					score+= 100 + (100 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
-					clickCombo++;
-				}
-				else{
-					objects[i]->data.point = 3;
-					score+= 300 + (300 * (std::max(clickCombo-1,0) * difficultyMultiplier * 1)/25);
-					clickCombo++;
-				}
-				objects[i]->data.time = currentTime*1000;
-				destroyHitObject();
+				objects[i]->update();
+			}
+			else{
+				objects[i]->update();
 			}
 		}else{
 			objects[i]->update();

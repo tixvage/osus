@@ -74,6 +74,7 @@ class Slider : public HitObject{
         void update() override;
         void dead_update() override;
         void dead_render() override;
+        bool is_colliding;
     private:
         std::vector<Vector2> edgePoints; 
         std::vector<Vector2> renderPoints; 

@@ -289,7 +289,10 @@ void Slider::update(){
         else position = (int)position % (int)data.length + 1; 
     }
     position = std::max(0.f,position);
-    
+
+    is_colliding = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 );
+    bool is_mouse_down = IsMouseButtonDown(0);
+
     if(gm->currentTime*1000 > data.time + (data.length/100) * 333.33f * data.slides){
         data.time = gm->currentTime*1000;
         data.point = 0;
@@ -301,7 +304,6 @@ void Slider::update(){
 
 void Slider::render(){
     GameManager* gm = GameManager::getInstance();
-
     if(data.curveType == 'L'){
         float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
         if(renderPoints.size() > 0){
@@ -359,12 +361,12 @@ void Slider::dead_render(){
     float fadeAnimation = 0.3*(1-((gm->currentTime*1000 + 200 - data.time )/200-1));
     float fadePoint = (1-((gm->currentTime*1000 + 400 - data.time )/400-1));
     float movePoint = (((gm->currentTime*1000 + 400 - data.time )/400-1))*20;
-    if(data.colour.size() > 2) DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*gm->windowScale-gm->hitCircleOverlay.width*scale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->hitCircleOverlay.height*scale*0.5f*gm->windowScale/2},0,scale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, fadeAnimation));
-    else DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*gm->windowScale-gm->hitCircleOverlay.width*scale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->hitCircleOverlay.height*scale*0.5f*gm->windowScale/2},0,scale*gm->windowScale/2, Fade(WHITE, fadeAnimation));
-    if(data.point == 0) DrawTextureEx(gm->hit0, Vector2{data.x*gm->windowScale-gm->hit0.width*1*0.5f*gm->windowScale/2 ,data.y*gm->windowScale-gm->hit0.height*1*0.5f*gm->windowScale/2},(1-fadePoint)*15,1*gm->windowScale/2, Fade(WHITE, fadePoint));
-    else if(data.point == 1) DrawTextureEx(gm->hit50, Vector2{data.x*gm->windowScale-gm->hit50.width*1*0.5f*gm->windowScale/2 ,data.y*gm->windowScale-gm->hit50.height*1*0.5f*gm->windowScale/2 },0,1*gm->windowScale/2, Fade(WHITE, fadePoint));
-    else if(data.point == 2) DrawTextureEx(gm->hit100, Vector2{data.x*gm->windowScale-gm->hit100.width*1*0.5f*gm->windowScale/2 ,data.y*gm->windowScale-gm->hit100.height*1*0.5f*gm->windowScale/2},0,1*gm->windowScale/2, Fade(WHITE, fadePoint));
-    else if(data.point == 3) DrawTextureEx(gm->hit300, Vector2{data.x*gm->windowScale-gm->hit300.width*1*0.5f*gm->windowScale/2 ,data.y*gm->windowScale-gm->hit300.height*1*0.5f*gm->windowScale/2},0,1*gm->windowScale/2, Fade(WHITE, fadePoint));
+    if(data.colour.size() > 2) DrawTextureEx(gm->hitCircleOverlay, Vector2{renderPoints[position].x*gm->windowScale-gm->hitCircleOverlay.width*scale*0.5f*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->hitCircleOverlay.height*scale*0.5f*gm->windowScale/2},0,scale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, fadeAnimation));
+    else DrawTextureEx(gm->hitCircleOverlay, Vector2{renderPoints[position].x*gm->windowScale-gm->hitCircleOverlay.width*scale*0.5f*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->hitCircleOverlay.height*scale*0.5f*gm->windowScale/2},0,scale*gm->windowScale/2, Fade(WHITE, fadeAnimation));
+    if(data.point == 0) DrawTextureEx(gm->hit0, Vector2{renderPoints[position].x*gm->windowScale-gm->hit0.width*1*0.5f*gm->windowScale/2 ,renderPoints[position].y*gm->windowScale-gm->hit0.height*1*0.5f*gm->windowScale/2},(1-fadePoint)*15,1*gm->windowScale/2, Fade(WHITE, fadePoint));
+    else if(data.point == 1) DrawTextureEx(gm->hit50, Vector2{(renderPoints[position].x)*gm->windowScale-gm->hit50.width*1*0.5f*gm->windowScale/2 ,(renderPoints[position].y)*gm->windowScale-gm->hit50.height*1*0.5f*gm->windowScale/2 },0,1*gm->windowScale/2, Fade(WHITE, fadePoint));
+    else if(data.point == 2) DrawTextureEx(gm->hit100, Vector2{renderPoints[position].x*gm->windowScale-gm->hit100.width*1*0.5f*gm->windowScale/2 ,renderPoints[position].y*gm->windowScale-gm->hit100.height*1*0.5f*gm->windowScale/2},0,1*gm->windowScale/2, Fade(WHITE, fadePoint));
+    else if(data.point == 3) DrawTextureEx(gm->hit300, Vector2{renderPoints[position].x*gm->windowScale-gm->hit300.width*1*0.5f*gm->windowScale/2 ,renderPoints[position].y*gm->windowScale-gm->hit300.height*1*0.5f*gm->windowScale/2},0,1*gm->windowScale/2, Fade(WHITE, fadePoint));
 }
 
 void Slider::dead_update(){
