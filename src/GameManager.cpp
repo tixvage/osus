@@ -136,8 +136,8 @@ void GameManager::render(){
 
 	float scale = 0.6f;
 
-	
-	
+
+
 	for(int i = objects.size() - 1; i >= 0; i--){
 		objects[i]->render();
 	}

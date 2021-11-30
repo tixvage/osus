@@ -276,7 +276,6 @@ void Slider::init(){
         //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
     }
     EndTextureMode();
-    //debuggink
 }
 
 void Slider::update(){
@@ -289,6 +288,11 @@ void Slider::update(){
         else position = (int)position % (int)data.length + 1; 
     }
     position = std::max(0.f,position);
+
+    if (position == 0){
+        is_hit_at_first = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 ) && IsMouseButtonPressed(0);
+        std::cout << is_hit_at_first << std::endl;
+    }
 
     is_colliding = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 );
     bool is_mouse_down = IsMouseButtonDown(0);
