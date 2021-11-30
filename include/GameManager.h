@@ -36,6 +36,17 @@ class GameManager{
 		float difficultyMultiplier = 0;
 		int currentComboIndex = 0;
 
+		int time;
+		int meter;
+		float beatLength;
+		int sampleSet;
+		int sampleIndex;
+		int volume;
+		bool uninherited;
+		int effects;
+		float sliderSpeed = 1;
+		float sliderSpeedOverride = 1;
+
 		GameFile gameFile;
 		Parser parser;
 		std::vector<HitObject*> objects;

@@ -281,10 +281,10 @@ void Slider::init(){
 void Slider::update(){
     GameManager* gm = GameManager::getInstance();
 
-    position = (gm->currentTime * 1000.f - (float)data.time) / (333.33f);// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
+    position = (gm->currentTime * 1000.f - (float)data.time) / (gm->beatLength) * gm->sliderSpeed * gm->sliderSpeedOverride;// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
     position *= 100;
     if(gm->currentTime*1000 - data.time > 0){
-        if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * 333.33f)) % 2 == 1) position = (int)data.length - ((int)position % (int)data.length + 1); 
+        if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * (gm->beatLength) / (gm->sliderSpeed* gm->sliderSpeedOverride))) % 2 == 1) position = (int)data.length - ((int)position % (int)data.length + 1); 
         else position = (int)position % (int)data.length + 1; 
     }
     position = std::max(0.f,position);
@@ -297,7 +297,7 @@ void Slider::update(){
     is_colliding = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 );
     bool is_mouse_down = IsMouseButtonDown(0);
 
-    if(gm->currentTime*1000 > data.time + (data.length/100) * 333.33f * data.slides){
+    if(gm->currentTime*1000 > data.time + (data.length/100) * (gm->beatLength) / (gm->sliderSpeed * gm->sliderSpeedOverride) * data.slides){
         data.time = gm->currentTime*1000;
         data.point = 0;
         gm->clickCombo = 0;

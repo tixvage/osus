@@ -29,6 +29,10 @@ void GameManager::init(){
 	InitWindow(640*windowScale,480*windowScale,"osus?");
 	SetTargetFPS(60);
 	HideCursor();
+
+
+	//std::cout << gameFile.configDifficulty["SliderMultiplier"] << std::endl;
+	
 	
 	hitCircle = LoadTexture("../skin/hitcircle.png");
     hitCircleOverlay = LoadTexture("../skin/hitcircleoverlay.png");
@@ -51,9 +55,25 @@ void GameManager::update(){
 	UpdateMusicStream(backgroundMusic);
 	currentTime = GetMusicTimePlayed(backgroundMusic);
 	//currentTime = GetTime();
-	int size = gameFile.hitObjects.size();
-	//lmao eren agla burasi 0 elemanli arrayda -1. elemani almamak icin var zort
-	
+
+	int timingSize = gameFile.timingPoints.size();
+	for(int i = timingSize-1; i >= 0; i--){
+		if(gameFile.timingPoints[i].time <= currentTime*1000){
+			time = gameFile.timingPoints[i].time;
+			beatLength = gameFile.timingPoints[i].beatLength;
+			meter = gameFile.timingPoints[i].meter;
+			sampleSet = gameFile.timingPoints[i].sampleSet;
+			sampleIndex = gameFile.timingPoints[i].sampleIndex;
+			volume = gameFile.timingPoints[i].volume;
+			uninherited = gameFile.timingPoints[i].uninherited;
+			effects = gameFile.timingPoints[i].effects;
+			gameFile.timingPoints.pop_back();
+		}
+	}
+
+	if(beatLength < 0) sliderSpeedOverride = (100 / beatLength * (-1));
+
+	int size = gameFile.hitObjects.size();	
 	for(int i = size-1; i >= 0; i--){
 		if(gameFile.hitObjects[i].time - gameFile.preempt <= currentTime*1000){
 			//spawn Circle
@@ -72,6 +92,7 @@ void GameManager::update(){
 		}
 		//else break;
 	}
+	
 
 	bool pressed = IsMouseButtonPressed(0);
 	bool down = IsMouseButtonDown(0);
@@ -195,6 +216,13 @@ void GameManager::loadGame(std::string filename){
 	float circlesize = std::stof(gameFile.configDifficulty["CircleSize"]);
 	float overalldifficulty = std::stof(gameFile.configDifficulty["OverallDifficulty"]);
 	difficultyMultiplier = ((hpdrainrate + circlesize + overalldifficulty + clip((float)gameFile.hitObjects.size() / GetMusicTimeLength(backgroundMusic) * 8.f, 0.f, 16.f)) / 38.f * 5.f);
+	if (gameFile.configDifficulty.find("SliderMultiplier") == gameFile.configDifficulty.end()) {
+  		
+	}
+	else{
+		sliderSpeed = std::stof(gameFile.configDifficulty["SliderMultiplier"]);
+	}
+
 }
 
 void GameManager::spawnHitObject(HitObjectData data){

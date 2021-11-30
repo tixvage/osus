@@ -90,7 +90,7 @@ GameFile Parser::parse(std::string filename){
 						}
 
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
-						
+						//std::cout << keyValue.first << " - " << keyValue.second << std::endl;
 						gameFile.configDifficulty[keyValue.first] = keyValue.second;
 					}
 					
@@ -175,8 +175,8 @@ GameFile Parser::parse(std::string filename){
 						std::vector<std::string> tempVector;
 						tempVector = parseSeperatedLists(subLine, ',');
 						tempTimingPoint.time = std::stoi(tempVector[0]);
-						tempTimingPoint.meter = std::stoi(tempVector[1]);
-						tempTimingPoint.beatLength = std::stof(tempVector[2]);
+						tempTimingPoint.beatLength = std::stof(tempVector[1]);
+						tempTimingPoint.meter = std::stoi(tempVector[2]);
 						tempTimingPoint.sampleSet = std::stoi(tempVector[3]);
 						tempTimingPoint.sampleIndex = std::stoi(tempVector[4]);
 						tempTimingPoint.volume = std::stoi(tempVector[5]);
