@@ -127,14 +127,6 @@ void GameManager::update(){
 					}
 				}
 			}
-			else if(down){
-				if(auto slider = dynamic_cast<Slider*>(objects[i])){
-					if (slider->is_colliding){
-						std::cout << "LETS GOO\n";
-					}
-				}
-				objects[i]->update();
-			}
 			else{
 				objects[i]->update();
 			}
@@ -151,7 +143,7 @@ void GameManager::update(){
 
 void GameManager::render(){
 	BeginDrawing();
-	ClearBackground(BLACK);
+	ClearBackground(BLANK);
 	DrawFPS(10, 10);
 	//DrawText(TextFormat("%d", score), 50,50,20,BLUE);
 
