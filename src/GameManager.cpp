@@ -244,6 +244,9 @@ void GameManager::destroyHitObject(){
 }
 
 void GameManager::destroyDeadHitObject(){
+	if (auto hm = dynamic_cast<Slider*>(dead_objects[0])){
+		std::cout << hm->demoPuan << std::endl;
+	}
 	delete dead_objects[0];
 	dead_objects.erase(dead_objects.begin());
 }

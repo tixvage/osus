@@ -289,13 +289,23 @@ void Slider::update(){
     }
     position = std::max(0.f,position);
 
-    if (position == 0){
-        is_hit_at_first = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 ) && IsMouseButtonPressed(0);
-        std::cout << is_hit_at_first << std::endl;
+    //TODO: sanırım buraya position <= 20 yerine başka bir şey girecez
+    if (position <= 100 and not is_hit_at_first){
+        is_hit_at_first = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 ) and IsMouseButtonPressed(0);
+    } else if (position > 100 and not is_hit_at_first){
+        //std::cout << "Missledin\n";
     }
 
-    is_colliding = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 );
-    bool is_mouse_down = IsMouseButtonDown(0);
+    if (is_hit_at_first){
+        if (not(CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,128*gm->windowScale/2 ) and IsMouseButtonDown(0))){
+            //std::cout << "PUAN GG" << std::endl;
+            demoPuan--;
+        }
+        else{
+            demoPuan++;
+        }
+    }
+
 
     if(gm->currentTime*1000 > data.time + (data.length/100) * (gm->beatLength) / (gm->sliderSpeed * gm->sliderSpeedOverride) * data.slides){
         data.time = gm->currentTime*1000;
