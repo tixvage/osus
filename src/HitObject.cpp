@@ -290,13 +290,14 @@ void Slider::update(){
     position = std::max(0.f,position);
 
     //TODO: sanırım buraya position <= 20 yerine başka bir şey girecez
-    if (position <= 100 and not is_hit_at_first){
+    if (gm->currentTime*1000 <= data.time + gm->gameFile.p100Final and not is_hit_at_first){
         is_hit_at_first = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 ) and IsMouseButtonPressed(0);
     } else if (position > 100 and not is_hit_at_first){
         //std::cout << "Missledin\n";
     }
 
     if (is_hit_at_first){
+        state = false;
         if (not(CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,128*gm->windowScale/2 ) and IsMouseButtonDown(0))){
             //std::cout << "PUAN GG" << std::endl;
             demoPuan--;
@@ -305,7 +306,9 @@ void Slider::update(){
             demoPuan++;
         }
     }
-
+    if(gm->currentTime*1000 > data.time + gm->gameFile.p100Final){
+        state = false;
+    }
 
     if(gm->currentTime*1000 > data.time + (data.length/100) * (gm->beatLength) / (gm->sliderSpeed * gm->sliderSpeedOverride) * data.slides){
         data.time = gm->currentTime*1000;
@@ -325,10 +328,10 @@ void Slider::render(){
         }
         int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
-        
-        if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
-        else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, clampedFade));      
-        
+        if(gm->currentTime*1000 - data.time > 0){
+            if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
+            else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, clampedFade));      
+        }
     }else if(data.curveType == 'B'){
         float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
         if(renderPoints.size() > 0){
@@ -336,10 +339,10 @@ void Slider::render(){
         }
         int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
-        
-        if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
-        else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE,clampedFade));      
-        
+        if(gm->currentTime*1000 - data.time > 0){
+            if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
+            else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE,clampedFade));      
+        }
     }else if(data.curveType == 'P'){
         if(renderPoints.size() > 0){
             float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
@@ -349,9 +352,10 @@ void Slider::render(){
 
             int calPos = position;
             calPos = std::min(calPos, static_cast<int>/*yes c++*/(renderPoints.size()-1));
-        
-            if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
-            else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, clampedFade));      
+            if(gm->currentTime*1000 - data.time > 0){
+                if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
+                else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, clampedFade));      
+            }
         }
     }else{
         float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
@@ -365,7 +369,19 @@ void Slider::render(){
         if(data.colour.size() > 2) DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
         else DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(WHITE, clampedFade));
     }
-    if(gm->currentTime*1000 <= data.time + gm->gameFile.p100Final) render_combo();
+
+    if(state){
+        float approachScale = 3*(1-(gm->currentTime*1000 - data.time + gm->gameFile.preempt)/gm->gameFile.preempt)+1;
+        if (approachScale <= 1) approachScale = 1;
+        float clampedFade = (gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in;
+        if(data.colour.size() > 2) DrawTextureEx(gm->hitCircle, Vector2{data.x*gm->windowScale-gm->hitCircle.width*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->hitCircle.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
+        else DrawTextureEx(gm->hitCircle, Vector2{data.x*gm->windowScale-gm->hitCircle.width*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->hitCircle.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, clampedFade));
+        //DrawTextEx(GetFontDefault(),(std::to_string(data.comboNumber)).c_str(), Vector2{data.x*2,data.y*2},20,3,Fade(WHITE, clampedFade));
+        render_combo();
+        DrawTextureEx(gm->hitCircleOverlay, Vector2{data.x*gm->windowScale-gm->hitCircleOverlay.width*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->hitCircleOverlay.height*0.5f*gm->windowScale/2},0,1*gm->windowScale/2, Fade(WHITE, clampedFade));
+        if(data.colour.size() > 2) DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
+        else DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(WHITE, clampedFade));
+    }
     
 }
 
@@ -409,7 +425,7 @@ void Slider::render_combo(){
         else if(i == 4) number = (number % 10000 - number % 1000)/1000;
         int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
-        DrawTextureEx(gm->numbers[number], Vector2{renderPoints[calPos].x*gm->windowScale - origin*gm->windowScale/2 + (digits - i - 1) * (gm->numbers[0].width - 150)*gm->windowScale/2, renderPoints[calPos].y*gm->windowScale - gm->numbers[0].width*gm->windowScale/2 / 2 },0,gm->windowScale / 2, Fade(WHITE, clampedFade));
+        DrawTextureEx(gm->numbers[number], Vector2{renderPoints[0].x*gm->windowScale - origin*gm->windowScale/2 + (digits - i - 1) * (gm->numbers[0].width - 150)*gm->windowScale/2, renderPoints[0].y*gm->windowScale - gm->numbers[0].width*gm->windowScale/2 / 2 },0,gm->windowScale / 2, Fade(WHITE, clampedFade));
     }
 
 

@@ -76,6 +76,7 @@ class Slider : public HitObject{
         void dead_render() override;
         bool is_hit_at_first = false;
         int demoPuan = 0;
+        bool state = true;
     private:
         float timer;
         //denemek için Ğ
