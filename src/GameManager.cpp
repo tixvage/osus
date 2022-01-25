@@ -26,6 +26,7 @@ GameManager::GameManager(){
 
 void GameManager::init(){
 	InitAudioDevice();
+	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	InitWindow(640*windowScale,480*windowScale,"osus?");
 	SetTargetFPS(60);
 	HideCursor();
