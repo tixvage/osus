@@ -365,6 +365,7 @@ void Slider::render(){
         if(data.colour.size() > 2) DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
         else DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(WHITE, clampedFade));
     }
+    if(gm->currentTime*1000 <= data.time + gm->gameFile.p100Final) render_combo();
     
 }
 
@@ -406,6 +407,10 @@ void Slider::render_combo(){
         else if(i == 2) number = (number % 100 - number % 10)/10;
         else if(i == 3) number = (number % 1000 - number % 100)/100;
         else if(i == 4) number = (number % 10000 - number % 1000)/1000;
-        DrawTextureEx(gm->numbers[number], Vector2{(float)data.x*gm->windowScale - origin*gm->windowScale/2 + (digits - i - 1) * (gm->numbers[0].width - 150)*gm->windowScale/2, (float)data.y*gm->windowScale - gm->numbers[0].width*gm->windowScale/2 / 2 },0,gm->windowScale / 2, Fade(WHITE, clampedFade));
+        int calPos = position;
+        calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
+        DrawTextureEx(gm->numbers[number], Vector2{renderPoints[calPos].x*gm->windowScale - origin*gm->windowScale/2 + (digits - i - 1) * (gm->numbers[0].width - 150)*gm->windowScale/2, renderPoints[calPos].y*gm->windowScale - gm->numbers[0].width*gm->windowScale/2 / 2 },0,gm->windowScale / 2, Fade(WHITE, clampedFade));
     }
+
+
 }
