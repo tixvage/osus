@@ -259,22 +259,24 @@ void Slider::init(){
         std::__throw_invalid_argument("What The Fuck? Invalid Slider Type");
     }
     for(int i = 0; i < renderPoints.size(); i++){
-        minX = std::min(minX, (int)renderPoints[i].x);
-        minY = std::min(minY, (int)renderPoints[i].y);
-        maxX = std::max(maxX, (int)renderPoints[i].x);
-        maxY = std::max(maxY, (int)renderPoints[i].y);
+        minX = std::min(minX, renderPoints[i].x);
+        minY = std::min(minY, renderPoints[i].y);
+        maxX = std::max(maxX, renderPoints[i].x);
+        maxY = std::max(maxY, renderPoints[i].y);
     }
-    sliderTexture = LoadRenderTexture((maxX-minX+56)*gm->windowScale, (maxY-minY+56)*gm->windowScale+gm->windowScale);
+    sliderTexture = LoadRenderTexture((maxX-minX+(float)gm->hitCircle.height/2)*gm->windowScale, (maxY-minY+(float)gm->hitCircle.height/2)*gm->windowScale);
     BeginTextureMode(sliderTexture);
     ClearBackground(BLANK);
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-        DrawCircle((renderPoints[i].x-minX+28)*gm->windowScale, sliderTexture.texture.height + gm->windowScale - (renderPoints[i].y-minY+28)*gm->windowScale, 28*gm->windowScale,Color{200,200,200,255});
+        DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{200,200,200,255});
         //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
     }
+    DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{155,155,155,255});
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-        DrawCircle((renderPoints[i].x-minX+28)*gm->windowScale, sliderTexture.texture.height + gm->windowScale - (renderPoints[i].y-minY+28)*gm->windowScale, 26*gm->windowScale,Color{16,16,16,255});
+        DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-4)*gm->windowScale,Color{12,12,12,255});
         //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
     }
+    DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-4)*gm->windowScale,Color{12,12,12,255});
     EndTextureMode();
 }
 
@@ -324,7 +326,7 @@ void Slider::render(){
     if(data.curveType == 'L'){
         float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
         if(renderPoints.size() > 0){
-            DrawTextureEx(sliderTexture.texture, Vector2{(minX-28)*gm->windowScale,(minY-28)*gm->windowScale},0,1, Fade(WHITE,clampedFade));
+            DrawTextureEx(sliderTexture.texture, Vector2{(minX-(float)gm->hitCircle.height/4)*gm->windowScale,(minY-(float)gm->hitCircle.height/4)*gm->windowScale},0,1, Fade(WHITE,clampedFade));
         }
         int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
@@ -335,19 +337,19 @@ void Slider::render(){
     }else if(data.curveType == 'B'){
         float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
         if(renderPoints.size() > 0){
-            DrawTextureEx(sliderTexture.texture, Vector2{(minX-28)*gm->windowScale,(minY-28)*gm->windowScale},0,1, Fade(WHITE,clampedFade));
+            DrawTextureEx(sliderTexture.texture, Vector2{(minX-(float)gm->hitCircle.height/4)*gm->windowScale,(minY-(float)gm->hitCircle.height/4)*gm->windowScale},0,1, Fade(WHITE,clampedFade));
         }
         int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
         if(gm->currentTime*1000 - data.time > 0){
             if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
-            else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE,clampedFade));      
+            else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/4,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE,clampedFade));      
         }
     }else if(data.curveType == 'P'){
         if(renderPoints.size() > 0){
             float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
             if(renderPoints.size() > 0){
-                DrawTextureEx(sliderTexture.texture, Vector2{(minX-28)*gm->windowScale,(minY-28)*gm->windowScale},0,1, Fade(WHITE,clampedFade));
+                DrawTextureEx(sliderTexture.texture, Vector2{(minX-(float)gm->hitCircle.height/4)*gm->windowScale,(minY-(float)gm->hitCircle.height/4)*gm->windowScale},0,1, Fade(WHITE,clampedFade));
             }
 
             int calPos = position;

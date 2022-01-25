@@ -84,5 +84,5 @@ class Slider : public HitObject{
         std::vector<Vector2> renderPoints; 
         float position = 0;
         RenderTexture2D sliderTexture;
-        int minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
+        float minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 };
