@@ -77,12 +77,13 @@ class Slider : public HitObject{
         bool is_hit_at_first = false;
         int demoPuan = 0;
         bool state = true;
+        std::vector<Vector2> renderPoints; 
+        float position = 0;
     private:
         float timer;
         //denemek için Ğ
         std::vector<Vector2> edgePoints; 
-        std::vector<Vector2> renderPoints; 
-        float position = 0;
+        
         RenderTexture2D sliderTexture;
         float minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 };

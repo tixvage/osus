@@ -292,11 +292,6 @@ void Slider::update(){
         else position = (int)position % (int)data.length + 1; 
     }
     position = std::max(0.f,position);
-
-    if(CheckCollisionPointCircle(gm->MousePosition,Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 ) && gm->pressed && gm->currentTime*1000 < data.time + gm->gameFile.p100Final){
-        is_hit_at_first = true;
-    }
-
     if (is_hit_at_first){
         std::cout << "whoa" << std::endl;
         state = false;

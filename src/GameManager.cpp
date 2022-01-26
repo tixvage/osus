@@ -127,6 +127,17 @@ void GameManager::update(){
 						objects[i]->data.time = currentTime*1000;
 						destroyHitObject();
 					}
+					else {
+						objects[i]->update();
+					}
+				}
+				else if (objects[i]->data.type == 2){
+					if(Slider* tempslider = dynamic_cast<Slider*>(objects[i])){
+						if(CheckCollisionPointCircle(MousePosition,Vector2{tempslider->renderPoints[tempslider->position].x*windowScale, tempslider->renderPoints[tempslider->position].y*windowScale} ,128*windowScale/2 ) && pressed && currentTime*1000 < tempslider->data.time + gameFile.p100Final){
+        					tempslider->is_hit_at_first = true;
+    					}
+    				}
+    				objects[i]->update();
 				}
 				else{
 					objects[i]->update();
