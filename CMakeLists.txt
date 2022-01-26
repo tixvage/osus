@@ -18,5 +18,12 @@ set(PROJECT_INCLUDE_DIR
 include_directories(${PROJECT_INCLUDE_DIR})
 
 add_executable(${PROJECT_NAME} ${source_files})
-target_link_libraries(${PROJECT_NAME} raylib dl pthread)
+if (WIN32)
+	target_link_libraries(${PROJECT_NAME} raylib opengl32 gdi32 pthread winmm)
+endif (WIN32)
+
+if(UNIX)
+	target_link_libraries(${PROJECT_NAME} raylib dl pthread)
+endif (UNIX)
+
 target_link_libraries(${PROJECT_NAME} stdc++fs)
