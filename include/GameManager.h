@@ -46,6 +46,9 @@ class GameManager{
 		int effects;
 		float sliderSpeed = 1;
 		float sliderSpeedOverride = 1;
+		bool pressed = false;
+		bool down = false;
+
 
 		GameFile gameFile;
 		Parser parser;

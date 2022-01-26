@@ -56,6 +56,9 @@ void GameManager::update(){
 	UpdateMusicStream(backgroundMusic);
 	currentTime = GetMusicTimePlayed(backgroundMusic);
 	//currentTime = GetTime();
+	
+	pressed = IsMouseButtonPressed(0);
+	down = IsMouseButtonDown(0);
 
 	int timingSize = gameFile.timingPoints.size();
 	for(int i = timingSize-1; i >= 0; i--){
@@ -95,8 +98,7 @@ void GameManager::update(){
 	}
 	
 
-	bool pressed = IsMouseButtonPressed(0);
-	bool down = IsMouseButtonDown(0);
+	
 	
 	for(int i = 0; i < objects.size(); i++){
 		if(i == 0){

@@ -255,6 +255,8 @@ void Slider::init(){
         
     }else if(data.curveType == 'C'){
 
+
+
     }else{
         std::__throw_invalid_argument("What The Fuck? Invalid Slider Type");
     }
@@ -268,15 +270,15 @@ void Slider::init(){
     BeginTextureMode(sliderTexture);
     ClearBackground(BLANK);
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-        DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{200,200,200,255});
+        DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{170,170,170,255});
         //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
     }
-    DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{155,155,155,255});
+    DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{170,170,170,255});
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
-        DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-4)*gm->windowScale,Color{12,12,12,255});
+        DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-5)*gm->windowScale,Color{12,12,12,255});
         //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
     }
-    DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-4)*gm->windowScale,Color{12,12,12,255});
+    DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-5)*gm->windowScale,Color{12,12,12,255});
     EndTextureMode();
 }
 
@@ -290,28 +292,17 @@ void Slider::update(){
         else position = (int)position % (int)data.length + 1; 
     }
     position = std::max(0.f,position);
-
-    //TODO: sanırım buraya position <= 20 yerine başka bir şey girecez
-    if (gm->currentTime*1000 <= data.time + gm->gameFile.p100Final and not is_hit_at_first){
-        is_hit_at_first = CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,56*gm->windowScale/2 ) and IsMouseButtonPressed(0);
-    } else if (position > 100 and not is_hit_at_first){
-        //std::cout << "Missledin\n";
+    if (gm->currentTime*1000 < data.time + gm->gameFile.p100Final && is_hit_at_first == false){
+        std::cout << "hop" << std::endl;
+        is_hit_at_first = CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 ) && gm->pressed;
     }
-
     if (is_hit_at_first){
+        std::cout << "whoa" << std::endl;
         state = false;
-        if (not(CheckCollisionPointCircle({(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2 + 84*gm->windowScale/2,renderPoints[position].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2 +84*gm->windowScale/2} ,128*gm->windowScale/2 ) and IsMouseButtonDown(0))){
-            //std::cout << "PUAN GG" << std::endl;
-            demoPuan--;
-        }
-        else{
-            demoPuan++;
-        }
     }
     if(gm->currentTime*1000 > data.time + gm->gameFile.p100Final){
         state = false;
     }
-
     if(gm->currentTime*1000 > data.time + (data.length/100) * (gm->beatLength) / (gm->sliderSpeed * gm->sliderSpeedOverride) * data.slides){
         data.time = gm->currentTime*1000;
         data.point = 0;
@@ -384,8 +375,14 @@ void Slider::render(){
         if(data.colour.size() > 2) DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
         else DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(WHITE, clampedFade));
     }
-    if(is_hit_at_first){
+    if(CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 )){
         DrawCircle(20, 20, 20, RED);
+    }
+    if(gm->pressed){
+        DrawCircle(20, 60, 20, GREEN);
+    }
+    if(CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 ) && gm->pressed){
+        DrawCircle(20, 100, 20, BLUE);
     }
 }
 
