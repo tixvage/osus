@@ -56,7 +56,7 @@ void GameManager::update(){
 	UpdateMusicStream(backgroundMusic);
 	currentTime = GetMusicTimePlayed(backgroundMusic);
 	//currentTime = GetTime();
-	
+	MousePosition = Vector2{GetMouseX(), GetMouseY()};
 	pressed = IsMouseButtonPressed(0);
 	down = IsMouseButtonDown(0);
 

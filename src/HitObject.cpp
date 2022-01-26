@@ -292,10 +292,11 @@ void Slider::update(){
         else position = (int)position % (int)data.length + 1; 
     }
     position = std::max(0.f,position);
-    if (gm->currentTime*1000 < data.time + gm->gameFile.p100Final && is_hit_at_first == false){
-        std::cout << "hop" << std::endl;
-        is_hit_at_first = CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 ) && gm->pressed;
+
+    if(CheckCollisionPointCircle(gm->MousePosition,Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 ) && gm->pressed && gm->currentTime*1000 < data.time + gm->gameFile.p100Final){
+        is_hit_at_first = true;
     }
+
     if (is_hit_at_first){
         std::cout << "whoa" << std::endl;
         state = false;
@@ -375,15 +376,7 @@ void Slider::render(){
         if(data.colour.size() > 2) DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
         else DrawTextureEx(gm->approachCircle, Vector2{data.x*gm->windowScale-gm->approachCircle.width*approachScale*0.5f*gm->windowScale/2,data.y*gm->windowScale-gm->approachCircle.height*approachScale*0.5f*gm->windowScale/2},0,approachScale*gm->windowScale/2, Fade(WHITE, clampedFade));
     }
-    if(CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 )){
-        DrawCircle(20, 20, 20, RED);
-    }
-    if(gm->pressed){
-        DrawCircle(20, 60, 20, GREEN);
-    }
-    if(CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{renderPoints[position].x*gm->windowScale, renderPoints[position].y*gm->windowScale} ,128*gm->windowScale/2 ) && gm->pressed){
-        DrawCircle(20, 100, 20, BLUE);
-    }
+   
 }
 
 void Slider::dead_render(){

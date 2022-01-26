@@ -48,7 +48,7 @@ class GameManager{
 		float sliderSpeedOverride = 1;
 		bool pressed = false;
 		bool down = false;
-
+		Vector2 MousePosition;
 
 		GameFile gameFile;
 		Parser parser;
