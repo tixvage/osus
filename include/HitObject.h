@@ -11,18 +11,14 @@ struct HitObjectData{
     int time;
     int type;
     int hitSound;
-    
     int point = 0;
-
     char curveType;
     std::vector<std::pair<int,int> > curvePoints;
     int slides;
     float length;
     std::vector<int> edgeSounds;
     std::vector<std::pair<int, int> > edgeSets;
-
     int endTime;
-
     int normalSet;
     int additionSet;
     int index;
@@ -81,9 +77,7 @@ class Slider : public HitObject{
         float position = 0;
     private:
         float timer;
-        //denemek için Ğ
         std::vector<Vector2> edgePoints; 
-        
         RenderTexture2D sliderTexture;
         float minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 };

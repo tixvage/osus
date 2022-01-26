@@ -6,35 +6,38 @@
 #include <vector>
 #include <math.h>
 
-//some weird things
-float GameManager::clip(float value, float min, float max) {
-  return std::min(std::max(value,min), max);
+//for some reason the clamp function didnt work so here is a manual one
+float GameManager::clip(float value, float min, float max){
+  	return std::min(std::max(value,min), max);
 }
+
 
 GameManager* GameManager::inst_ = NULL;
 
+//get a new gamemanager
 GameManager* GameManager::getInstance() {
-   if (inst_ == NULL) {
-      inst_ = new GameManager();
-   }
-   return(inst_);
+   	if (inst_ == NULL)
+   		inst_ = new GameManager();
+   	return(inst_);
 }
 
+//call the initilization
 GameManager::GameManager(){
 	init();
 }
 
+//initilize the game manager
 void GameManager::init(){
+	//initilize the audio part of raylib
 	InitAudioDevice();
+	//initilize the window
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	InitWindow(640*windowScale,480*windowScale,"osus?");
+	//set the fps to the common number of 60
 	SetTargetFPS(60);
+	//hide the cursor because we have a custom one
 	HideCursor();
-
-
-	//std::cout << gameFile.configDifficulty["SliderMultiplier"] << std::endl;
-	
-	
+	//load all the textures (can also do this in load_game)
 	hitCircle = LoadTexture("../skin/hitcircle.png");
     hitCircleOverlay = LoadTexture("../skin/hitcircleoverlay.png");
     approachCircle = LoadTexture("../skin/approachcircle.png");
@@ -45,21 +48,20 @@ void GameManager::init(){
     hit100 = LoadTexture("../skin/hit100.png");
     hit300 = LoadTexture("../skin/hit300.png");
     sliderb = LoadTexture("../skin/sliderb0.png");
-
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 10; i++)
     	numbers[i] = LoadTexture(("../skin/default-" + (std::to_string(i)) + ".png").c_str());
-    }
 }
 
+//main game loop
 void GameManager::update(){
-
+	//update the music and get the time from it
 	UpdateMusicStream(backgroundMusic);
 	currentTime = GetMusicTimePlayed(backgroundMusic);
-	//currentTime = GetTime();
+	//get the mouse position and state
 	MousePosition = Vector2{GetMouseX(), GetMouseY()};
 	pressed = IsMouseButtonPressed(0);
 	down = IsMouseButtonDown(0);
-
+	//currently not used that much but it will be
 	int timingSize = gameFile.timingPoints.size();
 	for(int i = timingSize-1; i >= 0; i--){
 		if(gameFile.timingPoints[i].time <= currentTime*1000){
@@ -74,16 +76,13 @@ void GameManager::update(){
 			gameFile.timingPoints.pop_back();
 		}
 	}
-
+	//calculate the slider speed
 	if(beatLength < 0) sliderSpeedOverride = (100 / beatLength * (-1));
-
+	//spawn the hitobjects when their time comes
 	int size = gameFile.hitObjects.size();	
 	for(int i = size-1; i >= 0; i--){
 		if(gameFile.hitObjects[i].time - gameFile.preempt <= currentTime*1000){
-			//spawn Circle
-
 			spawnHitObject(gameFile.hitObjects[i]);
-			//lmao eren agla burasi 0 elemanli arrayda -1. elemani almamak icin var zort
 			if(objects[objects.size()-1]->data.startingACombo){
 				currentComboIndex++;
 				if(gameFile.comboColours.size()) currentComboIndex = (currentComboIndex + objects[objects.size()-1]->data.skipComboColours) % gameFile.comboColours.size();
@@ -94,12 +93,8 @@ void GameManager::update(){
 			combo++;
 			gameFile.hitObjects.pop_back();
 		}
-		//else break;
 	}
-	
-
-	
-	
+	//update and check collision for every hit circle
 	for(int i = 0; i < objects.size(); i++){
 		if(i == 0){
 			if (pressed){
@@ -127,77 +122,70 @@ void GameManager::update(){
 						objects[i]->data.time = currentTime*1000;
 						destroyHitObject();
 					}
-					else {
+					else
 						objects[i]->update();
-					}
 				}
 				else if (objects[i]->data.type == 2){
-					if(Slider* tempslider = dynamic_cast<Slider*>(objects[i])){
-						if(CheckCollisionPointCircle(MousePosition,Vector2{tempslider->renderPoints[tempslider->position].x*windowScale, tempslider->renderPoints[tempslider->position].y*windowScale} ,128*windowScale/2 ) && pressed && currentTime*1000 < tempslider->data.time + gameFile.p100Final){
+					if(Slider* tempslider = dynamic_cast<Slider*>(objects[i]))
+						if(CheckCollisionPointCircle(MousePosition,Vector2{tempslider->renderPoints[tempslider->position].x*windowScale, tempslider->renderPoints[tempslider->position].y*windowScale} ,128*windowScale/2 ) && pressed && currentTime*1000 < tempslider->data.time + gameFile.p100Final)
         					tempslider->is_hit_at_first = true;
-    					}
-    				}
+        			//this cursed else train is nothing to worry about...
     				objects[i]->update();
 				}
-				else{
+				else
 					objects[i]->update();
-				}
 			}
-			else{
+			else
 				objects[i]->update();
-			}
-		}else{
-			objects[i]->update();
 		}
+		else
+			objects[i]->update();
 	}
-	
-	//dead animations
-	for(int i = 0; i < dead_objects.size(); i++){
+	//also update the dead objects
+	for(int i = 0; i < dead_objects.size(); i++)
 		dead_objects[i]->dead_update();
-	}
 }
 
+//main rendering loop
 void GameManager::render(){
+	//set the screen for drawing
 	BeginDrawing();
-	ClearBackground(BLANK);
+	//currently the background is a set color but we can change that
+	ClearBackground(Color{5,0,15,255});
+	//draw the fps
 	DrawFPS(10, 10);
-	//DrawText(TextFormat("%d", score), 50,50,20,BLUE);
-
+	//this is the mouse scale... i think
 	float scale = 0.6f;
-
-
-
-	for(int i = objects.size() - 1; i >= 0; i--){
+	//render all the objects
+	for(int i = objects.size() - 1; i >= 0; i--)
 		objects[i]->render();
-	}
-
-	//dead animations
-	for(int i = dead_objects.size() - 1; i >= 0; i--){
+	for(int i = dead_objects.size() - 1; i >= 0; i--)
 		dead_objects[i]->dead_render();
-	}
-	//DrawTexture(cursor,GetMouseX(), GetMouseY(), RED);
-
+	//render the points and the combo
 	render_points();
 	render_combo();
+	//draw the custom mouse cursor
 	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*windowScale/2*scale*0.5f,GetMouseY()-cursor.height*scale*windowScale/2*0.5f},0,scale*windowScale/2, WHITE);
 	EndDrawing();
 }
 
 void GameManager::run(){
+	//just run the game 
 	while(!WindowShouldClose()){
 		update();
 		render();
 	}
-
 	CloseWindow();
 }
 
+//load the beatmap
 void GameManager::loadGame(std::string filename){
+	//create a parser and parse the file
 	Parser parser = Parser();
 	gameFile = parser.parse(filename);
-
+	//reverse the hitobject array because we need it reversed for it to make sense (and make it faster because pop_back)
 	std::reverse(gameFile.hitObjects.begin(),gameFile.hitObjects.end());
-
+	//calculate all the variables for the game (these may be a bit wrong but they feel right)
 	if(std::stoi(gameFile.configDifficulty["ApproachRate"]) < 5){
 		gameFile.preempt = 1200 + 600 * (5 - std::stoi(gameFile.configDifficulty["ApproachRate"])) / 5;
 		gameFile.fade_in = 800 + 400 * (5 - std::stoi(gameFile.configDifficulty["ApproachRate"])) / 5;
@@ -213,27 +201,24 @@ void GameManager::loadGame(std::string filename){
 	gameFile.p300Final = gameFile.p300 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p300Change;
 	gameFile.p100Final = gameFile.p100 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p100Change;
 	gameFile.p50Final = gameFile.p50 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p50Change;
-
+	//debug, just say what the name of the music file is and load it
 	std::cout << ("../beatmaps/" + gameFile.configGeneral["AudioFilename"]) << std::endl;
-
 	backgroundMusic = LoadMusicStream(("../beatmaps/" + gameFile.configGeneral["AudioFilename"]).c_str());
+	//start playing the music and set the volume, it gets quite loud
 	PlayMusicStream(backgroundMusic);
     SetMusicVolume(backgroundMusic, 0.2f);
-
+    //these are not used right now, USE THEM
 	float hpdrainrate = std::stof(gameFile.configDifficulty["HPDrainRate"]);
 	float circlesize = std::stof(gameFile.configDifficulty["CircleSize"]);
 	float overalldifficulty = std::stof(gameFile.configDifficulty["OverallDifficulty"]);
+	//more difficulty stuff, may also be wrong
 	difficultyMultiplier = ((hpdrainrate + circlesize + overalldifficulty + clip((float)gameFile.hitObjects.size() / GetMusicTimeLength(backgroundMusic) * 8.f, 0.f, 16.f)) / 38.f * 5.f);
-	if (gameFile.configDifficulty.find("SliderMultiplier") == gameFile.configDifficulty.end()) {
-  		
-	}
-	else{
+	if (gameFile.configDifficulty.find("SliderMultiplier") != gameFile.configDifficulty.end())
 		sliderSpeed = std::stof(gameFile.configDifficulty["SliderMultiplier"]);
-	}
-
 }
 
 void GameManager::spawnHitObject(HitObjectData data){
+	//spawn a new hitobject, the cool way
 	HitObject *temp;
 	if(data.type == 1){
 		temp = new Circle(data);
@@ -255,53 +240,52 @@ void GameManager::spawnHitObject(HitObjectData data){
 }
 
 void GameManager::destroyHitObject(){
+	//declare a hitobject dead
 	dead_objects.push_back(objects[0]);
 	objects.erase(objects.begin());
 }
 
 void GameManager::destroyDeadHitObject(){
-	if (auto hm = dynamic_cast<Slider*>(dead_objects[0])){
-		std::cout << hm->demoPuan << std::endl;
-	}
+	//somehow "kill" the "dead" object
 	delete dead_objects[0];
 	dead_objects.erase(dead_objects.begin());
 }
 
 void GameManager::render_points(){
+	//garbage digit finder code but it works, NO IT DOESNT WORK WITH SOME SKINS
     int digits = 1;
     int tempScore = score;
-    while(true){
-    	if (tempScore < 10) break;
+    while(!false){
+    	if (tempScore < 10)
+    		break;
     	digits++;
     	tempScore /= 10;
     }
-
     for(int i = digits; i >= 1 ; i--){
         int number = score;
         int mod = 10;
-        for(int j = 1; j < i; j++){
+        for(int j = 1; j < i; j++)
         	mod *= 10;
-        }
         number = (number % mod - number % (mod/10))/(mod/10);
         DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)*windowScale/2, 0 },0,windowScale/2, Fade(WHITE, 1));
     }
 }
 
 void GameManager::render_combo(){
+	//garbage digit finder code but it works, NO IT DOESNT WORK WITH SOME SKINS
     int digits = 1;
     int tempCombo = clickCombo;
-    while(true){
-    	if (tempCombo < 10) break;
+    while(!false){
+    	if (tempCombo < 10)
+    		break;
     	digits++;
     	tempCombo /= 10;
     }
-
     for(int i = digits; i >= 1 ; i--){
         int number = clickCombo;
         int mod = 10;
-        for(int j = 1; j < i; j++){
+        for(int j = 1; j < i; j++)
         	mod *= 10;
-        }
         number = (number % mod - number % (mod/10))/(mod/10);
         DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)*windowScale/2 /2, 440*windowScale },0,0.5f*windowScale/2, Fade(WHITE, 1));
     }

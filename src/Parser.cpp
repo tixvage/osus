@@ -2,6 +2,8 @@
 
 Parser::Parser(){}
 
+
+//this here is just a dumb parser, nothing to document here tbh
 GameFile Parser::parse(std::string filename){
 	GameFile gameFile;
 	gameFile.configDifficulty["SliderMultiplier"] = "1";
