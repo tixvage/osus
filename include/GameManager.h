@@ -5,14 +5,19 @@
 class GameManager{
 	public:
 		static GameManager* getInstance();
+
 		GameManager();
 		void run();
 		void loadGame(std::string filename);
+
+		float clip(float value, float min, float max);
+
 		void destroyHitObject();
 		void destroyDeadHitObject();
 
 		float windowScale = 2.0f;
 		int skip = 2;
+
 		Texture2D hitCircle;
 		Texture2D hitCircleOverlay;
 		Texture2D approachCircle;
@@ -46,22 +51,25 @@ class GameManager{
 		int effects;
 		float sliderSpeed = 1;
 		float sliderSpeedOverride = 1;
+		
 		bool pressed = false;
 		bool down = false;
 		Vector2 MousePosition;
 
 		GameFile gameFile;
 		Parser parser;
+
 		std::vector<HitObject*> objects;
 		std::vector<HitObject*> dead_objects;
-		float clip(float value, float min, float max);
 	private:
 		static GameManager* inst_;
 		void init();
-		void render();
+
 		void update();
-		void spawnHitObject(HitObjectData data);
+
+		void render();
 		void render_points();
 		void render_combo();
-		
+
+		void spawnHitObject(HitObjectData data);
 };

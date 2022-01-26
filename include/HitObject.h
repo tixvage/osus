@@ -11,7 +11,7 @@ struct HitObjectData{
     int time;
     int type;
     int hitSound;
-    
+
     int point = 0;
 
     char curveType;
@@ -37,53 +37,56 @@ struct HitObjectData{
 
 class HitObject{
     public:
-        
-        HitObject(){};
-        ~HitObject() = default;
         virtual void init(){}
+
         virtual void render(){}
         virtual void render_combo(){}
+        virtual void dead_render(){}
+
         virtual void update(){}
         virtual void dead_update(){}
-        virtual void dead_render(){}
+        
+
         HitObjectData data;
         float x,y;
-    private:
-        
 };
 
 class Circle : public HitObject{
     public:
         Circle(HitObjectData data);
         void init() override; 
+
         void render() override;
         void render_combo() override;
+        void dead_render() override;
+
         void update() override;
         void dead_update() override;
-        void dead_render() override;
-    private:
-
 };
 
 class Slider : public HitObject{
     public:
         Slider(HitObjectData data);
         void init() override; 
+        
         void render() override;
         void render_combo() override;
+        void dead_render() override;
+
         void update() override;
         void dead_update() override;
-        void dead_render() override;
+        
         bool is_hit_at_first = false;
-        int demoPuan = 0;
+        float position = 0;
+
         bool state = true;
         std::vector<Vector2> renderPoints; 
-        float position = 0;
+        
     private:
         float timer;
-        //denemek için Ğ
+
         std::vector<Vector2> edgePoints; 
-        
         RenderTexture2D sliderTexture;
+        
         float minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 };

@@ -6,9 +6,8 @@
 #include <vector>
 #include <math.h>
 
-//some weird things
 float GameManager::clip(float value, float min, float max) {
-  return std::min(std::max(value,min), max);
+  return std::min(std::max(value, min), max);
 }
 
 GameManager* GameManager::inst_ = NULL;
@@ -17,6 +16,7 @@ GameManager* GameManager::getInstance() {
    if (inst_ == NULL) {
       inst_ = new GameManager();
    }
+
    return(inst_);
 }
 
@@ -30,10 +30,6 @@ void GameManager::init(){
 	InitWindow(640*windowScale,480*windowScale,"osus?");
 	SetTargetFPS(60);
 	HideCursor();
-
-
-	//std::cout << gameFile.configDifficulty["SliderMultiplier"] << std::endl;
-	
 	
 	hitCircle = LoadTexture("../skin/hitcircle.png");
     hitCircleOverlay = LoadTexture("../skin/hitcircleoverlay.png");
@@ -52,10 +48,9 @@ void GameManager::init(){
 }
 
 void GameManager::update(){
-
 	UpdateMusicStream(backgroundMusic);
 	currentTime = GetMusicTimePlayed(backgroundMusic);
-	//currentTime = GetTime();
+	
 	MousePosition = Vector2{GetMouseX(), GetMouseY()};
 	pressed = IsMouseButtonPressed(0);
 	down = IsMouseButtonDown(0);
@@ -80,31 +75,30 @@ void GameManager::update(){
 	int size = gameFile.hitObjects.size();	
 	for(int i = size-1; i >= 0; i--){
 		if(gameFile.hitObjects[i].time - gameFile.preempt <= currentTime*1000){
-			//spawn Circle
-
 			spawnHitObject(gameFile.hitObjects[i]);
-			//lmao eren agla burasi 0 elemanli arrayda -1. elemani almamak icin var zort
+			
 			if(objects[objects.size()-1]->data.startingACombo){
 				currentComboIndex++;
-				if(gameFile.comboColours.size()) currentComboIndex = (currentComboIndex + objects[objects.size()-1]->data.skipComboColours) % gameFile.comboColours.size();
+				if(gameFile.comboColours.size()) 
+					currentComboIndex = (currentComboIndex + objects[objects.size()-1]->data.skipComboColours) % gameFile.comboColours.size();
 				combo = 1;
 			}
+
 			if(gameFile.comboColours.size()) objects[objects.size()-1]->data.colour = gameFile.comboColours[currentComboIndex];
+
 			objects[objects.size()-1]->data.comboNumber = combo;
 			combo++;
 			gameFile.hitObjects.pop_back();
 		}
-		//else break;
 	}
-	
-
-	
 	
 	for(int i = 0; i < objects.size(); i++){
 		if(i == 0){
 			if (pressed){
 				if (objects[i]->data.type != 2){
-					if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*windowScale,(float)objects[i]->data.y*windowScale}, 56*windowScale/2) && pressed){
+					//TODO
+					
+					if (CheckCollisionPointCircle(MousePosition, Vector2{(float)objects[i]->data.x*windowScale,(float)objects[i]->data.y*windowScale}, 56*windowScale/2) && pressed){
 						if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p50Final){
 							objects[i]->data.point = 0;
 							clickCombo = 0;
@@ -133,6 +127,7 @@ void GameManager::update(){
 				}
 				else if (objects[i]->data.type == 2){
 					if(Slider* tempslider = dynamic_cast<Slider*>(objects[i])){
+						//TODO
 						if(CheckCollisionPointCircle(MousePosition,Vector2{tempslider->renderPoints[tempslider->position].x*windowScale, tempslider->renderPoints[tempslider->position].y*windowScale} ,128*windowScale/2 ) && pressed && currentTime*1000 < tempslider->data.time + gameFile.p100Final){
         					tempslider->is_hit_at_first = true;
     					}
@@ -151,7 +146,7 @@ void GameManager::update(){
 		}
 	}
 	
-	//dead animations
+	//Dead Animations
 	for(int i = 0; i < dead_objects.size(); i++){
 		dead_objects[i]->dead_update();
 	}
@@ -161,25 +156,22 @@ void GameManager::render(){
 	BeginDrawing();
 	ClearBackground(BLANK);
 	DrawFPS(10, 10);
-	//DrawText(TextFormat("%d", score), 50,50,20,BLUE);
 
 	float scale = 0.6f;
-
-
 
 	for(int i = objects.size() - 1; i >= 0; i--){
 		objects[i]->render();
 	}
 
-	//dead animations
+	//Dead animations
 	for(int i = dead_objects.size() - 1; i >= 0; i--){
 		dead_objects[i]->dead_render();
 	}
-	//DrawTexture(cursor,GetMouseX(), GetMouseY(), RED);
 
 	render_points();
 	render_combo();
 	DrawTextureEx(cursor, Vector2{GetMouseX()-cursor.width*windowScale/2*scale*0.5f,GetMouseY()-cursor.height*scale*windowScale/2*0.5f},0,scale*windowScale/2, WHITE);
+	
 	EndDrawing();
 }
 
@@ -210,6 +202,7 @@ void GameManager::loadGame(std::string filename){
 		gameFile.preempt = 1200;
 		gameFile.fade_in = 800;
 	}
+
 	gameFile.p300Final = gameFile.p300 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p300Change;
 	gameFile.p100Final = gameFile.p100 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p100Change;
 	gameFile.p50Final = gameFile.p50 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p50Change;
@@ -223,18 +216,17 @@ void GameManager::loadGame(std::string filename){
 	float hpdrainrate = std::stof(gameFile.configDifficulty["HPDrainRate"]);
 	float circlesize = std::stof(gameFile.configDifficulty["CircleSize"]);
 	float overalldifficulty = std::stof(gameFile.configDifficulty["OverallDifficulty"]);
+
 	difficultyMultiplier = ((hpdrainrate + circlesize + overalldifficulty + clip((float)gameFile.hitObjects.size() / GetMusicTimeLength(backgroundMusic) * 8.f, 0.f, 16.f)) / 38.f * 5.f);
-	if (gameFile.configDifficulty.find("SliderMultiplier") == gameFile.configDifficulty.end()) {
-  		
-	}
-	else{
+	
+	if (gameFile.configDifficulty.find("SliderMultiplier") != gameFile.configDifficulty.end()) {
 		sliderSpeed = std::stof(gameFile.configDifficulty["SliderMultiplier"]);
 	}
-
 }
 
 void GameManager::spawnHitObject(HitObjectData data){
 	HitObject *temp;
+
 	if(data.type == 1){
 		temp = new Circle(data);
 		objects.push_back(temp);
@@ -242,7 +234,6 @@ void GameManager::spawnHitObject(HitObjectData data){
 	else if(data.type == 2){
 		temp = new Slider(data);
 		objects.push_back(temp);
-
 	}
 	else if(data.type == 3){
 		temp = new Circle(data);
@@ -260,9 +251,6 @@ void GameManager::destroyHitObject(){
 }
 
 void GameManager::destroyDeadHitObject(){
-	if (auto hm = dynamic_cast<Slider*>(dead_objects[0])){
-		std::cout << hm->demoPuan << std::endl;
-	}
 	delete dead_objects[0];
 	dead_objects.erase(dead_objects.begin());
 }
@@ -270,19 +258,23 @@ void GameManager::destroyDeadHitObject(){
 void GameManager::render_points(){
     int digits = 1;
     int tempScore = score;
+	
     while(true){
     	if (tempScore < 10) break;
     	digits++;
     	tempScore /= 10;
     }
 
-    for(int i = digits; i >= 1 ; i--){
+    for(int i = digits; i >= 1; i--){
         int number = score;
         int mod = 10;
+
         for(int j = 1; j < i; j++){
         	mod *= 10;
         }
+
         number = (number % mod - number % (mod/10))/(mod/10);
+
         DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)*windowScale/2, 0 },0,windowScale/2, Fade(WHITE, 1));
     }
 }
@@ -290,6 +282,7 @@ void GameManager::render_points(){
 void GameManager::render_combo(){
     int digits = 1;
     int tempCombo = clickCombo;
+
     while(true){
     	if (tempCombo < 10) break;
     	digits++;
@@ -299,10 +292,13 @@ void GameManager::render_combo(){
     for(int i = digits; i >= 1 ; i--){
         int number = clickCombo;
         int mod = 10;
+
         for(int j = 1; j < i; j++){
         	mod *= 10;
         }
+
         number = (number % mod - number % (mod/10))/(mod/10);
+
         DrawTextureEx(numbers[number], Vector2{0 + (digits - i - 1) * (numbers[0].width - 150)*windowScale/2 /2, 440*windowScale },0,0.5f*windowScale/2, Fade(WHITE, 1));
     }
 }

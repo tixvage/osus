@@ -3,28 +3,29 @@
 #include <math.h>
 #include <algorithm>
 
-
-
 int orientation(Vector2 p1, Vector2 p2, Vector2 p3)
 {
     int val = (p2.y - p1.y) * (p3.x - p2.x) -
               (p2.x - p1.x) * (p3.y - p2.y);
 
- 
     return (val > 0)? false: true; // clock or counterclock wise
 }
 
 Vector2 getBezierPoint( Vector2* points, int numPoints, float t ) {
     Vector2* tmp = new Vector2[numPoints];
     memcpy(tmp, points, numPoints * sizeof(Vector2));
+
     int i = numPoints - 1;
+
     while (i > 0) {
         for (int k = 0; k < i; k++)
             tmp[k] = Vector2{tmp[k].x + t *(tmp[k+1].x - tmp[k].x),tmp[k].y + t *(tmp[k+1].y - tmp[k].y)};
         i--;
     }
+
     Vector2 answer = tmp[0];
     delete[] tmp;
+
     return answer;
 }
 
@@ -59,7 +60,6 @@ Circle::Circle(HitObjectData data){
 
 void Circle::init(){
     GameManager* gm = GameManager::getInstance();
-
 }
 
 void Circle::update(){
@@ -105,6 +105,7 @@ void Circle::dead_render(){
 
 void Circle::dead_update(){
     GameManager* gm = GameManager::getInstance();
+
     if (data.time+400 < gm->currentTime*1000){
         gm->destroyDeadHitObject();
     }
@@ -112,19 +113,24 @@ void Circle::dead_update(){
 
 void Circle::render_combo(){
     GameManager* gm = GameManager::getInstance();
+
     float clampedFade = (gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in;
     int digits = 1;
+
     if(data.comboNumber >= 1000) digits = 4;
     else if(data.comboNumber >= 100) digits = 3;
     else if(data.comboNumber >= 10) digits = 2;
+
     int origin = (gm->numbers[0].width + (digits - 3) * (gm->numbers[0].width - 150)) / 2;
 
     for(int i = digits; i >= 1 ; i--){
         int number = data.comboNumber;
+
         if(i == 1) number = number % 10;
         else if(i == 2) number = (number % 100 - number % 10)/10;
         else if(i == 3) number = (number % 1000 - number % 100)/100;
         else if(i == 4) number = (number % 10000 - number % 1000)/1000;
+
         DrawTextureEx(gm->numbers[number], Vector2{(float)data.x*gm->windowScale - origin*gm->windowScale/2 + (digits - i - 1) * (gm->numbers[0].width - 150)*gm->windowScale/2, (float)data.y*gm->windowScale - gm->numbers[0].width*gm->windowScale/2 / 2 },0,gm->windowScale / 2, Fade(WHITE, clampedFade));
     }
 }
@@ -156,30 +162,27 @@ void Slider::init(){
         }
 
         for(int i = 0; i < lineLengths.size(); i++){
-            //std::cout << lineLengths[i] << " ";
             totalLength+=lineLengths[i];
         }
 
         lengthScale = totalLength/data.length;
 
-        //std::cout << " -> " << lengthScale << " " << totalLength / lengthScale << std::endl;
-
         for(int i = 0; i < edgePoints.size()-1; i++){
-            //renderPoints.push_back(edgePoints[i]);
             for(float j = 0; j < lineLengths[i]; j += lengthScale){
-                
                 renderPoints.push_back(Vector2{edgePoints[i].x + (edgePoints[i+1].x - edgePoints[i].x)*j/lineLengths[i], edgePoints[i].y + (edgePoints[i+1].y - edgePoints[i].y)*j/lineLengths[i]});
-                //std::cout << (edgePoints[i+1].x - edgePoints[i].x)*j/lineLengths[i] << " " << (edgePoints[i+1].y - edgePoints[i].y)*j/lineLengths[i] << std::endl;
             }
         }
+        
         renderPoints.push_back(edgePoints[edgePoints.size()-1]);
 
+        //Omere kodda guvenirseniz ne olur
         while(!false){
             if(renderPoints.size()-1 <= data.length) break;
             renderPoints.pop_back();
         }
 
-    }else if(data.curveType == 'B'){
+    }
+    else if(data.curveType == 'B'){
         Vector2 edges[edgePoints.size()];
 
         for(int i = 0; i < edgePoints.size(); i++){
@@ -192,9 +195,8 @@ void Slider::init(){
             Vector2 tmp = getBezierPoint(edges, edgePoints.size(), i);
             renderPoints.push_back(tmp);
         }
-        
-    }else if(data.curveType == 'P'){
-
+    }
+    else if(data.curveType == 'P'){
         /*
             I literally took a fucking 3 hour trigonometry lesson to get this shit working
             UPDATE : THIS SHIT ISNT WORKING
@@ -206,7 +208,6 @@ void Slider::init(){
 
         int radius = circleData.second;
 
-        // Some math shit
         float degree1 = atan2(edgePoints[0].y - center.y , edgePoints[0].x - center.x) * RAD2DEG;
         float degree2 = atan2(edgePoints[1].y - center.y , edgePoints[1].x - center.x) * RAD2DEG;
         float degree3 = atan2(edgePoints[2].y - center.y , edgePoints[2].x - center.x) * RAD2DEG;
@@ -216,12 +217,7 @@ void Slider::init(){
         degree3 = degree3 < 0 ? degree3 + 360 : degree3;
 
         bool clockwise = !orientation(edgePoints[0], edgePoints[1], edgePoints[2]);
-        
-        //std::cout << !orientation(edgePoints[0], edgePoints[1], edgePoints[2]) << " " << degree1 << " " << degree3 << " ";
 
-        //eren pls fix this failure of a code...
-
-        //eren sen cidden bunun icin aglion mu
         if(clockwise){
 
             degree1 = degree1 < degree3 ? degree1 + 360 : degree1;
@@ -230,22 +226,23 @@ void Slider::init(){
             for(float i = degree1; i > degree3 - (degree1-degree3)/resolution; i-= (degree1-degree3)/resolution){
                 if(currentResolution > resolution) break;
                 currentResolution++;
+
                 Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
+
                 renderPoints.push_back(tempPoint);
-                //std::cout << "+";
             }
 
         }else{
-
             degree2 = degree2 < degree1 ? degree2 + 360 : degree2;
             degree3 = degree3 < degree1 ? degree3 + 360 : degree3;
 
             for(float i = degree3; i > degree1 - (degree3-degree1)/resolution; i -= (degree3-degree1)/resolution){
                 if(currentResolution > resolution) break;
                 currentResolution++;
+
                 Vector2 tempPoint = Vector2{center.x + cos(i / RAD2DEG) * radius, center.y + sin(i / RAD2DEG) * radius};
+
                 renderPoints.push_back(tempPoint);
-                //std::cout << "-";
             }
 
             std::reverse(renderPoints.begin(), renderPoints.end());
@@ -260,24 +257,28 @@ void Slider::init(){
     }else{
         std::__throw_invalid_argument("What The Fuck? Invalid Slider Type");
     }
+
     for(int i = 0; i < renderPoints.size(); i++){
         minX = std::min(minX, renderPoints[i].x);
         minY = std::min(minY, renderPoints[i].y);
         maxX = std::max(maxX, renderPoints[i].x);
         maxY = std::max(maxY, renderPoints[i].y);
     }
+
     sliderTexture = LoadRenderTexture((maxX-minX+(float)gm->hitCircle.height/2)*gm->windowScale, (maxY-minY+(float)gm->hitCircle.height/2)*gm->windowScale);
     BeginTextureMode(sliderTexture);
     ClearBackground(BLANK);
+    
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
         DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{170,170,170,255});
-        //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, WHITE);
     }
+
     DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-2)*gm->windowScale,Color{170,170,170,255});
+    
     for(int i = 0; i < renderPoints.size(); i+=gm->skip){
         DrawCircle((renderPoints[i].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[i].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-5)*gm->windowScale,Color{12,12,12,255});
-        //DrawLineEx(renderPoints[i],renderPoints[i+1], 3, i < 2 ? GREEN : RED);
     }
+
     DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-5)*gm->windowScale,Color{12,12,12,255});
     EndTextureMode();
 }
@@ -285,20 +286,24 @@ void Slider::init(){
 void Slider::update(){
     GameManager* gm = GameManager::getInstance();
 
-    position = (gm->currentTime * 1000.f - (float)data.time) / (gm->beatLength) * gm->sliderSpeed * gm->sliderSpeedOverride;// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
+    position = (gm->currentTime * 1000.f - (float)data.time) / (gm->beatLength) * gm->sliderSpeed * gm->sliderSpeedOverride;
     position *= 100;
+
     if(gm->currentTime*1000 - data.time > 0){
-        if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * (gm->beatLength) / (gm->sliderSpeed* gm->sliderSpeedOverride))) % 2 == 1) position = (int)data.length - ((int)position % (int)data.length + 1); 
+        if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * (gm->beatLength) / (gm->sliderSpeed* gm->sliderSpeedOverride))) % 2 == 1) 
+            position = (int)data.length - ((int)position % (int)data.length + 1); 
         else position = (int)position % (int)data.length + 1; 
     }
+
     position = std::max(0.f,position);
     if (is_hit_at_first){
-        std::cout << "whoa" << std::endl;
         state = false;
     }
+
     if(gm->currentTime*1000 > data.time + gm->gameFile.p100Final){
         state = false;
     }
+
     if(gm->currentTime*1000 > data.time + (data.length/100) * (gm->beatLength) / (gm->sliderSpeed * gm->sliderSpeedOverride) * data.slides){
         data.time = gm->currentTime*1000;
         data.point = 0;
@@ -391,6 +396,7 @@ void Slider::dead_render(){
 
 void Slider::dead_update(){
     GameManager* gm = GameManager::getInstance();
+
     if (data.time+400 < gm->currentTime*1000){
         UnloadRenderTexture(sliderTexture);
         gm->destroyDeadHitObject();
@@ -416,6 +422,4 @@ void Slider::render_combo(){
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
         DrawTextureEx(gm->numbers[number], Vector2{renderPoints[0].x*gm->windowScale - origin*gm->windowScale/2 + (digits - i - 1) * (gm->numbers[0].width - 150)*gm->windowScale/2, renderPoints[0].y*gm->windowScale - gm->numbers[0].width*gm->windowScale/2 / 2 },0,gm->windowScale / 2, Fade(WHITE, clampedFade));
     }
-
-
 }

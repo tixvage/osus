@@ -8,8 +8,6 @@ GameFile Parser::parse(std::string filename){
     std::ifstream ifs("../beatmaps/" + filename);
 	std::string line;
 	if (ifs.is_open()){
-		//std::getline(ifs, line);
-		//std::cout << line << std::endl;
 		while(std::getline(ifs, line)){
 			if(line[line.size()-1] == 13){
 				line.pop_back();
@@ -90,7 +88,6 @@ GameFile Parser::parse(std::string filename){
 						}
 
 						std::pair<std::string, std::string> keyValue = parseKeyValue(subLine, false, false);
-						//std::cout << keyValue.first << " - " << keyValue.second << std::endl;
 						gameFile.configDifficulty[keyValue.first] = keyValue.second;
 					}
 					
@@ -128,7 +125,6 @@ GameFile Parser::parse(std::string filename){
 						}
 
 						tempEvent.startTime = std::stoi(tempVector[1]);
-						//std::cout<<tempEvent.eventType<<std::endl;
 						if(tempEvent.eventType == 0){
 							tempEvent.filename = tempVector[2].substr(1, tempVector[2].size()-2);
 							if(tempVector.size()>3)
@@ -422,6 +418,6 @@ std::string Parser::DecimalToBinaryString(int a)
             binary = binary + "0";
         mask <<= 1;
     }
-    //std::cout << binary << std::endl;
+    
     return binary;
 }
