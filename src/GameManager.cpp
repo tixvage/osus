@@ -105,7 +105,6 @@ void GameManager::update(){
 			if (pressed){
 				if (objects[i]->data.type != 2){
 					if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*windowScale,(float)objects[i]->data.y*windowScale}, 56*windowScale/2) && pressed){
-						
 						if(std::abs(currentTime*1000 - objects[i]->data.time) > gameFile.p50Final){
 							objects[i]->data.point = 0;
 							clickCombo = 0;
@@ -128,6 +127,9 @@ void GameManager::update(){
 						objects[i]->data.time = currentTime*1000;
 						destroyHitObject();
 					}
+				}
+				else{
+					objects[i]->update();
 				}
 			}
 			else{

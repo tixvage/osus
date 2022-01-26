@@ -322,7 +322,7 @@ void Slider::render(){
         }
         int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
-        if(gm->currentTime*1000 - data.time > 0){
+        if(gm->currentTime*1000 - data.time > 0 or !state){
             if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
             else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, clampedFade));      
         }
@@ -333,7 +333,7 @@ void Slider::render(){
         }
         int calPos = position;
         calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
-        if(gm->currentTime*1000 - data.time > 0){
+        if(gm->currentTime*1000 - data.time > 0 or !state){
             if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
             else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/4,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE,clampedFade));      
         }
@@ -346,7 +346,7 @@ void Slider::render(){
 
             int calPos = position;
             calPos = std::min(calPos, static_cast<int>/*yes c++*/(renderPoints.size()-1));
-            if(gm->currentTime*1000 - data.time > 0){
+            if(gm->currentTime*1000 - data.time > 0 or !state){
                 if(data.colour.size() > 2) DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(Color{data.colour[0],data.colour[1],data.colour[2]}, clampedFade));
                 else DrawTextureEx(gm->sliderb, Vector2{renderPoints[calPos].x*gm->windowScale-gm->sliderb.width*0.5f*gm->windowScale/2,renderPoints[calPos].y*gm->windowScale-gm->sliderb.height*0.5f*gm->windowScale/2},0,gm->windowScale/2, Fade(WHITE, clampedFade));      
             }
