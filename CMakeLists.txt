@@ -13,10 +13,11 @@ file(GLOB_RECURSE source_files "${source_dir}/*.cpp")
 
 set(PROJECT_INCLUDE_DIR
     ${PROJECT_DIR}/include
+	${PROJECT_DIR}/libs/raylib/src
 )
 
 include_directories(${PROJECT_INCLUDE_DIR})
-
+link_directories(${CMAKE_SOURCE_DIR}/build/raylib/desktop/)
 add_executable(${PROJECT_NAME} ${source_files})
 if (WIN32)
 	target_link_libraries(${PROJECT_NAME} raylib opengl32 gdi32 pthread winmm)

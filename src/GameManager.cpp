@@ -38,27 +38,27 @@ void GameManager::init(){
 	//hide the cursor because we have a custom one
 	HideCursor();
 	//load all the textures (can also do this in load_game)
-	hitCircle = LoadTexture("../skin/hitcircle.png");
-    hitCircleOverlay = LoadTexture("../skin/hitcircleoverlay.png");
-    approachCircle = LoadTexture("../skin/approachcircle.png");
-    cursor = LoadTexture("../skin/Extra Cursors/cursor.png");
-    selectCircle = LoadTexture("../skin/hitcircleselect.png");
-    hit0 = LoadTexture("../skin/hit0.png");
-    hit50 = LoadTexture("../skin/hit50.png");
-    hit100 = LoadTexture("../skin/hit100.png");
-    hit300 = LoadTexture("../skin/hit300.png");
-    sliderb = LoadTexture("../skin/sliderb0.png");
+	hitCircle = LoadTexture("resources/skin/hitcircle.png");
+    hitCircleOverlay = LoadTexture("resources/skin/hitcircleoverlay.png");
+    approachCircle = LoadTexture("resources/skin/approachcircle.png");
+    cursor = LoadTexture("resources/skin/Extra Cursors/cursor.png");
+    selectCircle = LoadTexture("resources/skin/hitcircleselect.png");
+    hit0 = LoadTexture("resources/skin/hit0.png");
+    hit50 = LoadTexture("resources/skin/hit50.png");
+    hit100 = LoadTexture("resources/skin/hit100.png");
+    hit300 = LoadTexture("resources/skin/hit300.png");
+    sliderb = LoadTexture("resources/skin/sliderb0.png");
     for(int i = 0; i < 10; i++)
-    	numbers[i] = LoadTexture(("../skin/default-" + (std::to_string(i)) + ".png").c_str());
+    	numbers[i] = LoadTexture(("resources/skin/default-" + (std::to_string(i)) + ".png").c_str());
 }
 
 //main game loop
 void GameManager::update(){
-	//update the music and get the time from it
+	//update the music an  d get the time from it
 	UpdateMusicStream(backgroundMusic);
 	currentTime = GetMusicTimePlayed(backgroundMusic);
 	//get the mouse position and state
-	MousePosition = Vector2{GetMouseX(), GetMouseY()};
+	MousePosition = Vector2{(float)GetMouseX(), (float)GetMouseY()};
 	pressed = IsMouseButtonPressed(0);
 	down = IsMouseButtonDown(0);
 	//currently not used that much but it will be
@@ -202,8 +202,8 @@ void GameManager::loadGame(std::string filename){
 	gameFile.p100Final = gameFile.p100 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p100Change;
 	gameFile.p50Final = gameFile.p50 - std::stoi(gameFile.configDifficulty["OverallDifficulty"]) * gameFile.p50Change;
 	//debug, just say what the name of the music file is and load it
-	std::cout << ("../beatmaps/" + gameFile.configGeneral["AudioFilename"]) << std::endl;
-	backgroundMusic = LoadMusicStream(("../beatmaps/" + gameFile.configGeneral["AudioFilename"]).c_str());
+	std::cout << ("resources/beatmaps/" + gameFile.configGeneral["AudioFilename"]) << std::endl;
+	backgroundMusic = LoadMusicStream(("resources/beatmaps/" + gameFile.configGeneral["AudioFilename"]).c_str());
 	//start playing the music and set the volume, it gets quite loud
 	PlayMusicStream(backgroundMusic);
     SetMusicVolume(backgroundMusic, 0.2f);

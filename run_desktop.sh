@@ -1,0 +1,1 @@
+make build_desktop && build/desktop/OSUS

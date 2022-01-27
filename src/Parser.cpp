@@ -7,7 +7,7 @@ Parser::Parser(){}
 GameFile Parser::parse(std::string filename){
 	GameFile gameFile;
 	gameFile.configDifficulty["SliderMultiplier"] = "1";
-    std::ifstream ifs("../beatmaps/" + filename);
+    std::ifstream ifs("resources/beatmaps/" + filename);
 	std::string line;
 	if (ifs.is_open()){
 		//std::getline(ifs, line);
