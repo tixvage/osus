@@ -198,11 +198,17 @@ void Slider::init(){
         Vector2 edges[edgePoints.size()];
         for(int i = 0; i < edgePoints.size(); i++)
             edges[i] = edgePoints[i];
-        for(float i = 0; i < 1 + 1.0f / resolution; i += 1.0f / resolution){
+        for(float i = 0; i < 1; i += 1.0f / resolution){
             if(currentResolution > resolution) break;
             currentResolution++;
             Vector2 tmp = getBezierPoint(edges, edgePoints.size(), i);
             renderPoints.push_back(tmp);
+        }
+        std::cout << "----------------------------------------------------------------"<< std::endl;
+        std::cout << renderPoints.size() << " " << data.length << std::endl;
+        while(!false){
+            if(renderPoints.size()-1 <= data.length) break;
+            renderPoints.pop_back();
         }
     }
     else if(data.curveType == 'P'){

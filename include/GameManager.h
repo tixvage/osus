@@ -11,7 +11,7 @@ class GameManager{
 		void destroyHitObject();
 		void destroyDeadHitObject();
 		float windowScale = 2.0f;
-		int skip = 2;
+		int skip = 4;
 		Texture2D hitCircle;
 		Texture2D hitCircleOverlay;
 		Texture2D approachCircle;
@@ -39,8 +39,8 @@ class GameManager{
 		int volume;
 		bool uninherited;
 		int effects;
-		float sliderSpeed = 1;
-		float sliderSpeedOverride = 1;
+		float sliderSpeed = 1.0f;
+		float sliderSpeedOverride = 1.0f;
 		bool pressed = false;
 		bool down = false;
 		Vector2 MousePosition;

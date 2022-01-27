@@ -34,7 +34,7 @@ void GameManager::init(){
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	InitWindow(640*windowScale,480*windowScale,"osus?");
 	//set the fps to the common number of 60
-	SetTargetFPS(60);
+	SetTargetFPS(144);
 	//hide the cursor because we have a custom one
 	HideCursor();
 	//load all the textures (can also do this in load_game)
@@ -66,18 +66,28 @@ void GameManager::update(){
 	for(int i = timingSize-1; i >= 0; i--){
 		if(gameFile.timingPoints[i].time <= currentTime*1000){
 			time = gameFile.timingPoints[i].time;
-			beatLength = gameFile.timingPoints[i].beatLength;
+			float tempBeatLength;
+			tempBeatLength = gameFile.timingPoints[i].beatLength;
+			std::cout << "beatLength: " << tempBeatLength << std::endl;
+			if(tempBeatLength > 0)
+				beatLength = tempBeatLength;
 			meter = gameFile.timingPoints[i].meter;
 			sampleSet = gameFile.timingPoints[i].sampleSet;
 			sampleIndex = gameFile.timingPoints[i].sampleIndex;
 			volume = gameFile.timingPoints[i].volume;
 			uninherited = gameFile.timingPoints[i].uninherited;
 			effects = gameFile.timingPoints[i].effects;
+			//calculate the slider speed
+			if(tempBeatLength < 0){
+				sliderSpeedOverride = (100 / tempBeatLength * (-1));
+				std::cout << "slider speed override: " << sliderSpeedOverride << std::endl;
+			}
 			gameFile.timingPoints.pop_back();
 		}
+		else
+			break;
 	}
-	//calculate the slider speed
-	if(beatLength < 0) sliderSpeedOverride = (100 / beatLength * (-1));
+	
 	//spawn the hitobjects when their time comes
 	int size = gameFile.hitObjects.size();	
 	for(int i = size-1; i >= 0; i--){
@@ -93,6 +103,8 @@ void GameManager::update(){
 			combo++;
 			gameFile.hitObjects.pop_back();
 		}
+		else
+			break;
 	}
 	//update and check collision for every hit circle
 	for(int i = 0; i < objects.size(); i++){
@@ -185,6 +197,7 @@ void GameManager::loadGame(std::string filename){
 	gameFile = parser.parse(filename);
 	//reverse the hitobject array because we need it reversed for it to make sense (and make it faster because pop_back)
 	std::reverse(gameFile.hitObjects.begin(),gameFile.hitObjects.end());
+	std::reverse(gameFile.timingPoints.begin(),gameFile.timingPoints.end());
 	//calculate all the variables for the game (these may be a bit wrong but they feel right)
 	if(std::stoi(gameFile.configDifficulty["ApproachRate"]) < 5){
 		gameFile.preempt = 1200 + 600 * (5 - std::stoi(gameFile.configDifficulty["ApproachRate"])) / 5;
