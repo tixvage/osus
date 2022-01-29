@@ -10,9 +10,11 @@ int orientation(Vector2 p1, Vector2 p2, Vector2 p3){
 }
 
 //gets the points needed for a bezier curve, we can also define a resolution for it
-Vector2 getBezierPoint( Vector2* points, int numPoints, float t){
+Vector2 getBezierPoint(std::vector<Vector2> points, int numPoints, float t){
     Vector2* tmp = new Vector2[numPoints];
-    memcpy(tmp, points, numPoints * sizeof(Vector2));
+    for(int i = 0; i < points.size(); i++){
+        tmp[i] = points[i];
+    }
     int i = numPoints - 1;
     while (i > 0) {
         for (int k = 0; k < i; k++)
@@ -198,6 +200,53 @@ void Slider::init(){
         Vector2 edges[edgePoints.size()];
         for(int i = 0; i < edgePoints.size(); i++)
             edges[i] = edgePoints[i];
+        std::vector<Vector2> tempEdges;
+        std::vector<Vector2> tempRender;
+        std::vector<float> curveLengths;
+        float totalCalculatedLength = 0;
+        for(int i = 0; i < edgePoints.size(); i++){
+            tempEdges.push_back(edgePoints[i]);
+            if((edgePoints[i].x == edgePoints[i+1].x && edgePoints[i].y == edgePoints[i+1].y) || i == edgePoints.size()-1){
+                currentResolution = 0;
+                for(float j = 0; j < 1; j += 1.0f / 100.0f){
+                    if(currentResolution > 100) break;
+                    currentResolution++;
+                    Vector2 tmp = getBezierPoint(tempEdges, tempEdges.size(), j);
+                    tempRender.push_back(tmp);
+                }
+                float tempLength = 0;
+                for(int i = 1; i < tempRender.size(); i += 1)
+                    tempLength += std::sqrt(std::pow(std::abs(tempRender[i-1].x - tempRender[i].x),2) + std::pow(std::abs(tempRender[i-1].y - tempRender[i].y),2));
+                curveLengths.push_back(tempLength);
+                totalCalculatedLength += tempLength;
+                tempEdges.clear();
+                tempRender.clear();
+            }
+        }
+        tempEdges.clear();
+        tempRender.clear();
+        int curveIndex = 0;
+        for(int i = 0; i < edgePoints.size(); i++){
+            tempEdges.push_back(edgePoints[i]);
+            if((edgePoints[i].x == edgePoints[i+1].x && edgePoints[i].y == edgePoints[i+1].y) || i == edgePoints.size()-1){
+                currentResolution = 0;
+                float tempResolution = resolution / (totalCalculatedLength / curveLengths[curveIndex]);
+                for(float j = 0; j < 1; j += 1.0f / tempResolution){
+                    if(currentResolution > tempResolution) break;
+                    currentResolution++;
+                    Vector2 tmp = getBezierPoint(tempEdges, tempEdges.size(), j);
+                    renderPoints.push_back(tmp);
+                }
+                if(i != edgePoints.size()-1)
+                    renderPoints.pop_back();
+                tempEdges.clear();
+                curveIndex++;
+            }
+        }
+        std::cout << "----------------------------------------------------------------------------"<< std::endl;
+        std::cout << "given slider length: " << data.length << "  calculated slider length: " << renderPoints.size() << std::endl;
+        std::cout << "----------------------------------------------------------------------------"<< std::endl;
+        /*
         for(float i = 0; i < 1; i += 1.0f / resolution){
             if(currentResolution > resolution) break;
             currentResolution++;
@@ -206,6 +255,13 @@ void Slider::init(){
         }
         std::cout << "----------------------------------------------------------------"<< std::endl;
         std::cout << renderPoints.size() << " " << data.length << std::endl;
+        float tempLength = 0;
+        for(int i = 1; i < renderPoints.size(); i += 1){
+            tempLength += std::sqrt(std::pow(std::abs(renderPoints[i-1].x - renderPoints[i].x),2) + std::pow(std::abs(renderPoints[i-1].y - renderPoints[i].y),2));
+        }
+        std::cout << "calculated slider length: " << tempLength << "  given slider length: " << resolution << std::endl;
+        */
+
         while(!false){
             if(renderPoints.size()-1 <= data.length) break;
             renderPoints.pop_back();

@@ -61,6 +61,8 @@ void GameManager::update(){
 	MousePosition = Vector2{(float)GetMouseX(), (float)GetMouseY()};
 	pressed = IsMouseButtonPressed(0);
 	down = IsMouseButtonDown(0);
+
+
 	//currently not used that much but it will be
 	int timingSize = gameFile.timingPoints.size();
 	for(int i = timingSize-1; i >= 0; i--){
