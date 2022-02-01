@@ -437,7 +437,7 @@ void Slider::dead_render(){
     float fadePoint = (1-((gm->currentTime*1000 + 400 - data.time )/400-1));
     float movePoint = (((gm->currentTime*1000 + 400 - data.time )/400-1))*20;
     //fades the slider texture, ALSO NEED TO FADE THE OTHER PARTS AND BITS
-    DrawTextureEx(sliderTexture.texture, Vector2{(minX-(float)gm->hitCircle.height/4)*gm->windowScale-sliderTexture.texture.width*(scale-1)/2,(minY-(float)gm->hitCircle.height/4)*gm->windowScale-sliderTexture.texture.height*(scale-1)/2},0,scale, Fade(WHITE, fadeAnimation));
+    DrawTextureEx(sliderTexture.texture, Vector2{(minX-(float)gm->hitCircle.height/4)*gm->windowScale,(minY-(float)gm->hitCircle.height/4)*gm->windowScale},0,1, Fade(WHITE,fadeAnimation));
     //renders the points
     if(data.point == 0)
         DrawTextureEx(gm->hit0, Vector2{renderPoints[position].x*gm->windowScale-gm->hit0.width*1*0.5f*gm->windowScale/2 ,renderPoints[position].y*gm->windowScale-gm->hit0.height*1*0.5f*gm->windowScale/2},(1-fadePoint)*15,1*gm->windowScale/2, Fade(WHITE, fadePoint));
