@@ -1,8 +1,8 @@
 @echo off
 
 cls
-cd build
-cmake .. -G "MinGW Makefiles"
+cd build\desktop
+cmake ../.. -G "MinGW Makefiles"
 make
-OSUS
-cd ..
+cd ../..
+build\desktop\OSUS
