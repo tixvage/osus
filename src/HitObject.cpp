@@ -2,6 +2,29 @@
 #include "GameManager.h"
 #include <cmath>
 #include <algorithm>
+#include <raymath.h>
+
+float GetT( float t, float alpha, const Vector2& p0, const Vector2& p1 ){
+    Vector2 d  = Vector2Subtract(p1, p0);
+    float a = d.x * 2 + d.y * 2; // Dot product
+    float b = std::pow( a, alpha*.5f );
+    return (b + t);
+}
+
+Vector2 CatmullRom( const Vector2& p0, const Vector2& p1, const Vector2& p2, const Vector2& p3, float t, float alpha=.5f){
+    float t0 = 0.0f;
+    float t1 = GetT( t0, alpha, p0, p1 );
+    float t2 = GetT( t1, alpha, p1, p2 );
+    float t3 = GetT( t2, alpha, p2, p3 );
+    t = t1 + t * (t2 - t1);
+    Vector2 A1 = Vector2Add(Vector2Scale(p0 , ( t1-t )/( t1-t0 )) , Vector2Scale(p1 , ( t-t0 )/( t1-t0 )));
+    Vector2 A2 = Vector2Add(Vector2Scale(p1 , ( t2-t )/( t2-t1 )) , Vector2Scale(p2 , ( t-t1 )/( t2-t1 )));
+    Vector2 A3 = Vector2Add(Vector2Scale(p2 , ( t3-t )/( t3-t2 )) , Vector2Scale(p3 , ( t-t2 )/( t3-t2 )));
+    Vector2 B1 = Vector2Add(Vector2Scale(A1 , ( t2-t )/( t2-t0 )) , Vector2Scale(A2 , ( t-t0 )/( t2-t0 )));
+    Vector2 B2 = Vector2Add(Vector2Scale(A2 , ( t3-t )/( t3-t1 )) , Vector2Scale(A3 , ( t-t1 )/( t3-t1 )));
+    Vector2 C  = Vector2Add(Vector2Scale(B1 , ( t2-t )/( t2-t1 )) , Vector2Scale(B2 , ( t-t1 )/( t2-t1 )));
+    return C;
+}
 
 //checks the perfect circle slider's orientation
 int orientation(Vector2 p1, Vector2 p2, Vector2 p3){
@@ -304,8 +327,8 @@ void Slider::init(){
         }
     }
     else if(data.curveType == 'C'){
-        //the "genius" behind the calculations decided not to do this, DO IT YOURSELF
-        std::__throw_invalid_argument("Catmull-Rom type Sliders aren't supported yet!");
+        //OTUR AGLA
+        std::__throw_invalid_argument("Haha Eren is too dumb to calculate this");
     }
     else{
         //there shouldnt be a different slider type so this wont be triggered
