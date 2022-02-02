@@ -75,6 +75,9 @@ class Slider : public HitObject{
         bool state = true;
         std::vector<Vector2> renderPoints; 
         float position = 0;
+        bool repeat = false;
+        bool repeat2 = false;
+        int curRepeat = 0;
     private:
         float timer;
         std::vector<Vector2> edgePoints; 

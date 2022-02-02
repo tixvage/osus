@@ -372,6 +372,21 @@ void Slider::update(){
     //calculates the position of the circle that you need to follow
     position = (gm->currentTime * 1000.f - (float)data.time) / (gm->beatLength) * gm->sliderSpeed * gm->sliderSpeedOverride;// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
     position *= 100;
+    curRepeat = std::max(0,(int)(position / data.length));
+    std::cout << curRepeat << std::endl;
+    std::cout << std::max(0.0f, position) + data.length << " " << data.length*data.slides << std::endl;
+    if((int)(std::max(0.0f, position) + data.length) < (int)(data.length*data.slides)){
+        repeat = true;
+    }
+    else{
+        repeat = false;
+    }
+    if((int)(std::max(0.0f, position) + 2*data.length) < (int)(data.length*data.slides)){
+        repeat2 = true;
+    }
+    else{
+        repeat2 = false;
+    }
     if(gm->currentTime*1000 - data.time > 0){
         //the slider can also run backwards, ADD BEGINNING AND END REVERSING VARIABLES
         if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * (gm->beatLength) / (gm->sliderSpeed* gm->sliderSpeedOverride))) % 2 == 1)
@@ -403,18 +418,38 @@ void Slider::render(){
             //check if the slider is actually valid
             if(renderPoints.size() > 0)
                 DrawTextureEx(sliderTexture.texture, Vector2{(minX-(float)gm->hitCircle.height/4)*gm->windowScale,(minY-(float)gm->hitCircle.height/4)*gm->windowScale},0,1, Fade(WHITE,clampedFade));
+            
+            //DrawTexturePro(gm->reverseArrow, Rectangle{0,0,gm->reverseArrow.width,gm->reverseArrow.height}, Rectangle{renderPoints[0].x*gm->windowScale,renderPoints[0].y*gm->windowScale,gm->reverseArrow.width*0.5f*gm->windowScale,gm->reverseArrow.height*0.5f*gm->windowScale}, Vector2{gm->reverseArrow.width*0.5f*gm->windowScale/2, gm->reverseArrow.height*0.5f*gm->windowScale/2}, angle, Fade(WHITE, clampedFade));
+            int index = 0;
+            int topla = 1;
             float angle = 0;
+            if(curRepeat%2 == 0){
+                index = renderPoints.size()-1;
+                topla = -1;
+            }
             if(renderPoints.size() >= 2){
-                angle = atan2(renderPoints[0].y- renderPoints[1].y, renderPoints[0].x - renderPoints[1].x);
+                angle = atan2(renderPoints[index].y- renderPoints[index+topla].y, renderPoints[index].x - renderPoints[index+topla].x);
                 angle = angle * 180 / PI + 180;
             }
-            /*DrawTextureEx(gm->reverseArrow, Vector2{
-                renderPoints[0].x*gm->windowScale-cos((angle-45)*PI/180)*((gm->reverseArrow.width*0.5f*gm->windowScale/2)/cos(45*PI/180)),
-                renderPoints[0].y*gm->windowScale-sin((angle-45)*PI/180)*((gm->reverseArrow.height*0.5f*gm->windowScale/2)/sin(45*PI/180))},
-                angle+180,
-                gm->windowScale/2,
-                Fade(WHITE, clampedFade));*/
-            DrawTexturePro(gm->reverseArrow, Rectangle{0,0,gm->reverseArrow.width,gm->reverseArrow.height}, Rectangle{renderPoints[0].x*gm->windowScale,renderPoints[0].y*gm->windowScale,gm->reverseArrow.width*0.5f*gm->windowScale,gm->reverseArrow.height*0.5f*gm->windowScale}, Vector2{gm->reverseArrow.width*0.5f*gm->windowScale/2, gm->reverseArrow.height*0.5f*gm->windowScale/2}, angle, Fade(WHITE, clampedFade));
+            if(repeat){
+                DrawTexturePro(gm->reverseArrow, Rectangle{0,0,gm->reverseArrow.width,gm->reverseArrow.height}, Rectangle{renderPoints[index].x*gm->windowScale,renderPoints[index].y*gm->windowScale,gm->reverseArrow.width*0.5f*gm->windowScale,gm->reverseArrow.height*0.5f*gm->windowScale}, Vector2{gm->reverseArrow.width*0.5f*gm->windowScale/2, gm->reverseArrow.height*0.5f*gm->windowScale/2}, angle, Fade(WHITE, clampedFade));
+            }
+            index = renderPoints.size()-1;
+            topla = -1;
+            angle = 0;
+            if(curRepeat%2 == 0){
+                index = 0; 
+                topla = 1; 
+            }
+            if(renderPoints.size() >= 2){
+                angle = atan2(renderPoints[index].y- renderPoints[index+topla].y, renderPoints[index].x - renderPoints[index+topla].x);
+                angle = angle * 180 / PI + 180;
+            }
+            if(repeat2 && position > 0){
+                DrawTexturePro(gm->reverseArrow, Rectangle{0,0,gm->reverseArrow.width,gm->reverseArrow.height}, Rectangle{renderPoints[0].x*gm->windowScale,renderPoints[0].y*gm->windowScale,gm->reverseArrow.width*0.5f*gm->windowScale,gm->reverseArrow.height*0.5f*gm->windowScale}, Vector2{gm->reverseArrow.width*0.5f*gm->windowScale/2, gm->reverseArrow.height*0.5f*gm->windowScale/2}, angle, Fade(WHITE, clampedFade));
+            }
+
+
             //calculate the position, and clamp it
             int calPos = position;
             calPos = std::min(calPos, static_cast<int>(renderPoints.size()-1));
