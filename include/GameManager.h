@@ -1,6 +1,7 @@
 #pragma once
 #include "Parser.h"
 #include <raylib.h>
+#include <raymath.h>
 
 class GameManager{
 	public:
@@ -22,6 +23,7 @@ class GameManager{
 		Texture2D hit100;
 		Texture2D hit300;
 		Texture2D sliderb;
+		Texture2D reverseArrow;
 		Texture2D numbers[10];
 		Music backgroundMusic;
 		double currentTime;
@@ -43,6 +45,7 @@ class GameManager{
 		float sliderSpeedOverride = 1.0f;
 		bool pressed = false;
 		bool down = false;
+		float angle = 0;
 		Vector2 MousePosition;
 		GameFile gameFile;
 		Parser parser;

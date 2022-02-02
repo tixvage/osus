@@ -48,6 +48,7 @@ void GameManager::init(){
     hit100 = LoadTexture("resources/skin/hit100.png");
     hit300 = LoadTexture("resources/skin/hit300.png");
     sliderb = LoadTexture("resources/skin/sliderb0.png");
+    reverseArrow = LoadTexture("resources/skin/reversearrow.png");
     for(int i = 0; i < 10; i++)
     	numbers[i] = LoadTexture(("resources/skin/default-" + (std::to_string(i)) + ".png").c_str());
 }
