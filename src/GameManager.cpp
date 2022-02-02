@@ -34,7 +34,7 @@ void GameManager::init(){
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	InitWindow(640*windowScale,480*windowScale,"osus?");
 	//set the fps to the common number of 60
-	SetTargetFPS(144);
+	SetTargetFPS(1440);
 	//hide the cursor because we have a custom one
 	HideCursor();
 	//load all the textures (can also do this in load_game)
