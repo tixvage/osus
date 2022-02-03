@@ -27,6 +27,85 @@ float distance(Vector2 p0, Vector2 p1){
     return std::sqrt(std::pow(std::abs(p0.x - p1.x),2) + std::pow(std::abs(p0.y - p1.y),2));
 }
 
+float interpolate(float *p, float *time, float t) {
+    float L01 = p[0] * (time[1] - t) / (time[1] - time[0]) + p[1] * (t - time[0]) / (time[1] - time[0]);
+    float L12 = p[1] * (time[2] - t) / (time[2] - time[1]) + p[2] * (t - time[1]) / (time[2] - time[1]);
+    float L23 = p[2] * (time[3] - t) / (time[3] - time[2]) + p[3] * (t - time[2]) / (time[3] - time[2]);
+    float L012 = L01 * (time[2] - t) / (time[2] - time[0]) + L12 * (t - time[0]) / (time[2] - time[0]);
+    float L123 = L12 * (time[3] - t) / (time[3] - time[1]) + L23 * (t - time[1]) / (time[3] - time[1]);
+    float C12 = L012 * (time[2] - t) / (time[2] - time[1]) + L123 * (t - time[1]) / (time[2] - time[1]);
+    return C12;
+}   
+
+
+std::vector<Vector2> interpolate(std::vector<Vector2> points, int index, int pointsPerSegment) {
+    std::vector<Vector2> result;
+    float x[4];
+    float y[4];
+    float time[4];
+    for (int i = 0; i < 4; i++) {
+        x[i] = points[index + i].x;
+        y[i] = points[index + i].y;
+        time[i] = i;
+    }
+    float tstart = 1;
+    float tend = 2;
+    float total = 0;
+    for (int i = 1; i < 4; i++) {
+        float dx = x[i] - x[i - 1];
+        float dy = y[i] - y[i - 1];
+        total += std::pow(dx * dx + dy * dy, .25);
+        time[i] = total;
+    }
+    tstart = time[1];
+    tend = time[2];
+    int segments = pointsPerSegment - 1;
+    result.push_back(points[index + 1]);
+    for (int i = 1; i < segments; i++) {
+        float xi = interpolate(x, time, tstart + (i * (tend - tstart)) / segments);
+        float yi = interpolate(y, time, tstart + (i * (tend - tstart)) / segments);
+        result.push_back(Vector2{xi, yi});
+    }
+    result.push_back(points[index + 2]);
+    return result;
+}
+
+
+std::vector<Vector2> interpolate(std::vector<Vector2> coordinates, float length){
+    std::vector<Vector2> vertices;
+    std::vector<int> pointsPerSegment;
+    for (int i = 0; i < coordinates.size(); i++){
+        vertices.push_back(coordinates[i]);
+        if(i > 0)
+            pointsPerSegment.push_back(distance(vertices[i], vertices[i-1]));
+    }
+    float lengthAll = 0;
+    for(int i = 0; i < pointsPerSegment.size(); i++) 
+        lengthAll += pointsPerSegment[i];
+    for(int i = 0; i < pointsPerSegment.size(); i++)
+        pointsPerSegment[i] *= length/lengthAll;
+    float dx = vertices[1].x - vertices[0].x;
+    float dy = vertices[1].y - vertices[0].y;
+    float x1 = vertices[0].x - dx;
+    float y1 = vertices[0].y - dy;
+    Vector2 start = {x1, y1};
+    int n = vertices.size() - 1;
+    dx = vertices[n].x - vertices[n-1].x;
+    dy = vertices[n].y - vertices[n-1].y;
+    float xn = vertices[n].x + dx;
+    float yn = vertices[n].y + dy;
+    Vector2 end = {xn, yn};
+    vertices.insert(vertices.begin(), start);
+    vertices.push_back(end);
+    std::vector<Vector2> result;
+    for (int i = 0; i < vertices.size() - 3; i++) {
+        std::vector<Vector2> points = interpolate(vertices, i, pointsPerSegment[i]);
+        for(int i = (result.size() > 0) ? 1 : 0; i < points.size(); i++)
+            result.push_back(points[i]);
+    }
+    return result;
+}
+
 Vector2 getCatmullPoint(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float alpha = 0.5f, float t = 0){
     float t01 = std::pow(distance(p0, p1), alpha);
     float t12 = std::pow(distance(p1, p2), alpha);
@@ -304,6 +383,7 @@ void Slider::init(){
         std::cout << "calculated slider length: " << tempLength << "  given slider length: " << resolution << std::endl;
         */
 
+        //renderPoints = interpolate(edgePoints, data.length);
         while(!false){
             if(renderPoints.size()-1 <= data.length) break;
             renderPoints.pop_back();
@@ -348,6 +428,11 @@ void Slider::init(){
     else if(data.curveType == 'C'){
         //OTUR AGLA
         //std::__throw_invalid_argument("Haha Eren is too dumb to calculate this")
+        renderPoints = interpolate(edgePoints, data.length);
+        while(!false){
+            if(renderPoints.size()-1 <= data.length) break;
+            renderPoints.pop_back();
+        }
         
     }
     else{
@@ -431,7 +516,7 @@ void Slider::update(){
 //the slider renderer, NEED TO ADD THE TICKS AND MORE ANIMATION STUFF
 void Slider::render(){
     GameManager* gm = GameManager::getInstance();
-    if(data.curveType == 'L' || data.curveType == 'B' || data.curveType == 'P'){
+    if(data.curveType == 'L' || data.curveType == 'B' || data.curveType == 'P' || data.curveType == 'C'){
         if(renderPoints.size() > 0){
             //calculate the opacity
             float clampedFade = gm->clip((gm->currentTime*1000 - data.time  + gm->gameFile.fade_in) / gm->gameFile.fade_in,0.0f,0.75f);
