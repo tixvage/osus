@@ -37,6 +37,7 @@ struct HitObjectData{
     int comboNumber;
     bool useDefaultHitSound;
     std::vector<int> colour;
+    
 };
 
 class HitObject{
