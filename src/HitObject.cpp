@@ -3,27 +3,46 @@
 #include <cmath>
 #include <algorithm>
 
-
-float GetT( float t, float alpha, const Vector2& p0, const Vector2& p1 ){
-    Vector2 d  = Vector2Subtract(p1, p0);
-    float a = d.x * 2 + d.y * 2; // Dot product
-    float b = std::pow( a, alpha*.5f );
-    return (b + t);
+inline Vector2 operator + (Vector2 p0, Vector2 p1){
+    return Vector2Add(p0, p1);
 }
 
-Vector2 CatmullRom( const Vector2& p0, const Vector2& p1, const Vector2& p2, const Vector2& p3, float t, float alpha=.5f){
-    float t0 = 0.0f;
-    float t1 = GetT( t0, alpha, p0, p1 );
-    float t2 = GetT( t1, alpha, p1, p2 );
-    float t3 = GetT( t2, alpha, p2, p3 );
-    t = t1 + t * (t2 - t1);
-    Vector2 A1 = Vector2Add(Vector2Scale(p0 , ( t1-t )/( t1-t0 )) , Vector2Scale(p1 , ( t-t0 )/( t1-t0 )));
-    Vector2 A2 = Vector2Add(Vector2Scale(p1 , ( t2-t )/( t2-t1 )) , Vector2Scale(p2 , ( t-t1 )/( t2-t1 )));
-    Vector2 A3 = Vector2Add(Vector2Scale(p2 , ( t3-t )/( t3-t2 )) , Vector2Scale(p3 , ( t-t2 )/( t3-t2 )));
-    Vector2 B1 = Vector2Add(Vector2Scale(A1 , ( t2-t )/( t2-t0 )) , Vector2Scale(A2 , ( t-t0 )/( t2-t0 )));
-    Vector2 B2 = Vector2Add(Vector2Scale(A2 , ( t3-t )/( t3-t1 )) , Vector2Scale(A3 , ( t-t1 )/( t3-t1 )));
-    Vector2 C  = Vector2Add(Vector2Scale(B1 , ( t2-t )/( t2-t1 )) , Vector2Scale(B2 , ( t-t1 )/( t2-t1 )));
-    return C;
+inline Vector2 operator - (Vector2 p0, Vector2 p1){
+    return Vector2Subtract(p0, p1);
+}
+
+inline Vector2 operator * (Vector2 p0, Vector2 p1){
+    return Vector2Multiply(p0, p1);
+}
+
+inline Vector2 operator / (Vector2 p0, Vector2 p1){
+    return Vector2Divide(p0, p1);
+}
+
+Vector2 vectorize(float i) {
+    return Vector2{i, i};
+}
+
+float distance(Vector2 p0, Vector2 p1){
+    return std::sqrt(std::pow(std::abs(p0.x - p1.x),2) + std::pow(std::abs(p0.y - p1.y),2));
+}
+
+Vector2 getCatmullPoint(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float alpha = 0.5f, float t = 0){
+    float t01 = std::pow(distance(p0, p1), alpha);
+    float t12 = std::pow(distance(p1, p2), alpha);
+    float t23 = std::pow(distance(p2, p3), alpha);
+
+    Vector2 m1 = (p2 - p1 + vectorize(t12) * ((p1 - p0) / vectorize(t01) - (p2 - p0) / vectorize((t01 + t12))));
+    Vector2 m2 = (p2 - p1 + vectorize(t12) * ((p3 - p2) / vectorize(t23) - (p3 - p1) / vectorize((t12 + t23))));
+
+
+    catmullRomSegment segment;
+    segment.a = vectorize(2.0f) * (p1 - p2) + m1 + m2;
+    segment.b = vectorize(-3.0f) * (p1 - p2) - m1 - m1 - m2;
+    segment.c = m1;
+    segment.d = p1;
+
+    return segment.a * vectorize(t) * vectorize(t) * vectorize(t) + segment.b * vectorize(t) * vectorize(t) + segment.c * vectorize(t) + segment.d;
 }
 
 //checks the perfect circle slider's orientation
@@ -266,9 +285,9 @@ void Slider::init(){
                 curveIndex++;
             }
         }
-        std::cout << "----------------------------------------------------------------------------"<< std::endl;
-        std::cout << "given slider length: " << data.length << "  calculated slider length: " << renderPoints.size() << std::endl;
-        std::cout << "----------------------------------------------------------------------------"<< std::endl;
+        //std::cout << "----------------------------------------------------------------------------"<< std::endl;
+        //std::cout << "given slider length: " << data.length << "  calculated slider length: " << renderPoints.size() << std::endl;
+        //std::cout << "----------------------------------------------------------------------------"<< std::endl;
         /*
         for(float i = 0; i < 1; i += 1.0f / resolution){
             if(currentResolution > resolution) break;
@@ -328,7 +347,8 @@ void Slider::init(){
     }
     else if(data.curveType == 'C'){
         //OTUR AGLA
-        std::__throw_invalid_argument("Haha Eren is too dumb to calculate this");
+        //std::__throw_invalid_argument("Haha Eren is too dumb to calculate this")
+        
     }
     else{
         //there shouldnt be a different slider type so this wont be triggered
@@ -373,8 +393,8 @@ void Slider::update(){
     position = (gm->currentTime * 1000.f - (float)data.time) / (gm->beatLength) * gm->sliderSpeed * gm->sliderSpeedOverride;// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
     position *= 100;
     curRepeat = std::max(0,(int)(position / data.length));
-    std::cout << curRepeat << std::endl;
-    std::cout << std::max(0.0f, position) + data.length << " " << data.length*data.slides << std::endl;
+    //std::cout << curRepeat << std::endl;
+    //std::cout << std::max(0.0f, position) + data.length << " " << data.length*data.slides << std::endl;
     if((int)(std::max(0.0f, position) + data.length) < (int)(data.length*data.slides)){
         repeat = true;
     }

@@ -71,7 +71,7 @@ void GameManager::update(){
 			time = gameFile.timingPoints[i].time;
 			float tempBeatLength;
 			tempBeatLength = gameFile.timingPoints[i].beatLength;
-			std::cout << "beatLength: " << tempBeatLength << std::endl;
+			//std::cout << "beatLength: " << tempBeatLength << std::endl;
 			if(tempBeatLength > 0)
 				beatLength = tempBeatLength;
 			meter = gameFile.timingPoints[i].meter;
@@ -83,7 +83,7 @@ void GameManager::update(){
 			//calculate the slider speed
 			if(tempBeatLength < 0){
 				sliderSpeedOverride = (100 / tempBeatLength * (-1));
-				std::cout << "slider speed override: " << sliderSpeedOverride << std::endl;
+				//std::cout << "slider speed override: " << sliderSpeedOverride << std::endl;
 			}
 			gameFile.timingPoints.pop_back();
 		}

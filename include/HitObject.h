@@ -5,6 +5,14 @@
 #include <raylib.h>
 #include <climits>
 
+struct catmullRomSegment
+{
+    Vector2 a;
+    Vector2 b;
+    Vector2 c;
+    Vector2 d;
+};
+
 struct HitObjectData{
     int x;
     int y;
