@@ -7,6 +7,11 @@ Parser::Parser(){}
 GameFile Parser::parse(std::string filename){
 	GameFile gameFile;
 	gameFile.configDifficulty["SliderMultiplier"] = "1";
+	gameFile.configDifficulty["HPDrainRate"] = "5";
+	gameFile.configDifficulty["CircleSize"] = "5";
+	gameFile.configDifficulty["OverallDifficulty"] = "5";
+	gameFile.configDifficulty["ApproachRate"] = "5";
+	gameFile.configDifficulty["SliderTickRate"] = "1";
     std::ifstream ifs("resources/beatmaps/" + filename);
 	std::string line;
 	if (ifs.is_open()){
