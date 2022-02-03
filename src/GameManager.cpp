@@ -188,7 +188,6 @@ void GameManager::run(){
 	//start playing the music and set the volume, it gets quite loud
 	PlayMusicStream(backgroundMusic);
     SetMusicVolume(backgroundMusic, 0.2f);
-	
 	//just run the game 
 	while(!WindowShouldClose()){
 		update();
