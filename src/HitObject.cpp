@@ -23,7 +23,7 @@ Vector2 vectorize(float i) {
     return Vector2{i, i};
 }
 
-float distance(Vector2 p0, Vector2 p1){
+float distance(Vector2 &p0, Vector2 &p1){
     return std::sqrt(std::pow(std::abs(p0.x - p1.x),2) + std::pow(std::abs(p0.y - p1.y),2));
 }
 
@@ -38,7 +38,7 @@ float interpolate(float *p, float *time, float t) {
 }   
 
 
-std::vector<Vector2> interpolate(std::vector<Vector2> points, int index, int pointsPerSegment) {
+std::vector<Vector2> interpolate(std::vector<Vector2> &points, int index, int pointsPerSegment) {
     std::vector<Vector2> result;
     float x[4];
     float y[4];
@@ -71,7 +71,7 @@ std::vector<Vector2> interpolate(std::vector<Vector2> points, int index, int poi
 }
 
 
-std::vector<Vector2> interpolate(std::vector<Vector2> coordinates, float length){
+std::vector<Vector2> interpolate(std::vector<Vector2> &coordinates, float length){
     std::vector<Vector2> vertices;
     std::vector<int> pointsPerSegment;
     for (int i = 0; i < coordinates.size(); i++){
@@ -106,7 +106,7 @@ std::vector<Vector2> interpolate(std::vector<Vector2> coordinates, float length)
     return result;
 }
 
-Vector2 getCatmullPoint(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float alpha = 0.5f, float t = 0){
+Vector2 getCatmullPoint(Vector2 &p0, Vector2 &p1, Vector2 &p2, Vector2 &p3, float alpha = 0.5f, float t = 0){
     float t01 = std::pow(distance(p0, p1), alpha);
     float t12 = std::pow(distance(p1, p2), alpha);
     float t23 = std::pow(distance(p2, p3), alpha);
@@ -125,13 +125,13 @@ Vector2 getCatmullPoint(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float al
 }
 
 //checks the perfect circle slider's orientation
-int orientation(Vector2 p1, Vector2 p2, Vector2 p3){
+int orientation(Vector2 &p1, Vector2 &p2, Vector2 &p3){
     int val = (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y);
     return (val > 0)? false: true;
 }
 
 //gets the points needed for a bezier curve, we can also define a resolution for it
-Vector2 getBezierPoint(std::vector<Vector2> points, int numPoints, float t){
+Vector2 getBezierPoint(std::vector<Vector2> &points, int numPoints, float t){
     Vector2* tmp = new Vector2[numPoints];
     for(int i = 0; i < points.size(); i++){
         tmp[i] = points[i];
@@ -148,7 +148,7 @@ Vector2 getBezierPoint(std::vector<Vector2> points, int numPoints, float t){
 }
 
 //gets the center point and the size for the perfect circle sliders
-std::pair<Vector2, int> getPerfectCircle(Vector2 p1, Vector2 p2, Vector2 p3){
+std::pair<Vector2, int> getPerfectCircle(Vector2 &p1, Vector2 &p2, Vector2 &p3){
     int x1 = p1.x;
     int y1 = p1.y;
     int x2 = p2.x;

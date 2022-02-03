@@ -185,6 +185,10 @@ void GameManager::render(){
 }
 
 void GameManager::run(){
+	//start playing the music and set the volume, it gets quite loud
+	PlayMusicStream(backgroundMusic);
+    SetMusicVolume(backgroundMusic, 0.2f);
+	
 	//just run the game 
 	while(!WindowShouldClose()){
 		update();
@@ -220,9 +224,7 @@ void GameManager::loadGame(std::string filename){
 	//debug, just say what the name of the music file is and load it
 	std::cout << ("resources/beatmaps/" + gameFile.configGeneral["AudioFilename"]) << std::endl;
 	backgroundMusic = LoadMusicStream(("resources/beatmaps/" + gameFile.configGeneral["AudioFilename"]).c_str());
-	//start playing the music and set the volume, it gets quite loud
-	PlayMusicStream(backgroundMusic);
-    SetMusicVolume(backgroundMusic, 0.2f);
+	
     //these are not used right now, USE THEM
 	float hpdrainrate = std::stof(gameFile.configDifficulty["HPDrainRate"]);
 	float circlesize = std::stof(gameFile.configDifficulty["CircleSize"]);
