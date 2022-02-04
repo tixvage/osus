@@ -1,6 +1,7 @@
 #include <HitObject.h>
 #include <cmath>
 #include <algorithm>
+#include "GameManager.h"
 
 inline Vector2 operator + (Vector2 p0, Vector2 p1){
     return Vector2Add(p0, p1);
@@ -474,7 +475,7 @@ void Slider::init(){
 void Slider::update(){
     GameManager* gm = GameManager::getInstance();
     //calculates the position of the circle that you need to follow
-    position = (gm->currentTime * 1000.f - (float)data.time) / (gm->beatLength) * gm->sliderSpeed * gm->sliderSpeedOverride;// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
+    position = (gm->currentTime * 1000.f - (float)data.time) / (data.timing.beatLength) * gm->sliderSpeed * data.timing.sliderSpeedOverride;// / std::stof(gm->gameFile.configDifficulty["SliderMultiplier"]));
     position *= 100;
     curRepeat = std::max(0,(int)(position / data.length));
     //std::cout << curRepeat << std::endl;
@@ -493,7 +494,7 @@ void Slider::update(){
     }
     if(gm->currentTime*1000 - data.time > 0){
         //the slider can also run backwards, ADD BEGINNING AND END REVERSING VARIABLES
-        if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * (gm->beatLength) / (gm->sliderSpeed* gm->sliderSpeedOverride))) % 2 == 1)
+        if ((int)((gm->currentTime*1000 - data.time) /((data.length/100) * (data.timing.beatLength) / (gm->sliderSpeed* data.timing.sliderSpeedOverride))) % 2 == 1)
             position = (int)data.length - ((int)position % (int)data.length + 1); 
         else
             position = (int)position % (int)data.length + 1; 
@@ -504,7 +505,7 @@ void Slider::update(){
     if (is_hit_at_first || gm->currentTime*1000 > data.time + gm->gameFile.p100Final)
         state = false;
     //ends the slider
-    if(gm->currentTime*1000 > data.time + (data.length/100) * (gm->beatLength) / (gm->sliderSpeed * gm->sliderSpeedOverride) * data.slides){
+    if(gm->currentTime*1000 > data.time + (data.length/100) * (data.timing.beatLength) / (gm->sliderSpeed * data.timing.sliderSpeedOverride) * data.slides){
         data.time = gm->currentTime*1000;
         data.point = 0;
         gm->clickCombo = 0;

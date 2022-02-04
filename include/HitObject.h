@@ -4,7 +4,6 @@
 #include <iostream>
 #include <raylib.h>
 #include <climits>
-#include "GameManager.h"
 
 struct catmullRomSegment
 {
@@ -12,6 +11,17 @@ struct catmullRomSegment
     Vector2 b;
     Vector2 c;
     Vector2 d;
+};
+
+struct timingSettings{
+    float beatLength;
+    float meter;
+    float sampleSet;
+    float sampleIndex;
+    float volume;
+    bool uninherited;
+    int effects;
+    float sliderSpeedOverride = 1;
 };
 
 struct HitObjectData{

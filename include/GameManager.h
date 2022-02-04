@@ -3,17 +3,6 @@
 #include <raylib.h>
 #include <raymath.h>
 
-struct timingSettings{
-	float beatLength;
-	int meter;
-	int sampleSet;
-	int sampleIndex;
-	int volume;
-	bool uninherited;
-	int effects;
-	float sliderSpeedOverride = 1;
-};
-
 class GameManager{
 	public:
 		static GameManager* getInstance();
@@ -63,6 +52,7 @@ class GameManager{
 		std::vector<HitObject*> objects;
 		std::vector<HitObject*> dead_objects;
 		float clip(float value, float min, float max);
+		timingSettings timingSettingsForHitObject;
 	private:
 		static GameManager* inst_;
 		void init();

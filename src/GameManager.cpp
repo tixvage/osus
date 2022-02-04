@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <vector>
 #include <math.h>
+#include <HitObject.h>
 
 //for some reason the clamp function didnt work so here is a manual one
 float GameManager::clip(float value, float min, float max){
@@ -51,6 +52,7 @@ void GameManager::init(){
     reverseArrow = LoadTexture("resources/skin/reversearrow.png");
     for(int i = 0; i < 10; i++)
     	numbers[i] = LoadTexture(("resources/skin/default-" + (std::to_string(i)) + ".png").c_str());
+    timingSettingsForHitObject.sliderSpeedOverride = 1;
 }
 
 //main game loop
@@ -62,13 +64,10 @@ void GameManager::update(){
 	MousePosition = Vector2{(float)GetMouseX(), (float)GetMouseY()};
 	pressed = IsMouseButtonPressed(0);
 	down = IsMouseButtonDown(0);
-
-	timingSettings timingSettingsForHitObject;
-
 	//currently not used that much but it will be
 	int timingSize = gameFile.timingPoints.size();
 	for(int i = timingSize-1; i >= 0; i--){
-		if(gameFile.timingPoints[i].time <= currentTime*1000){
+		if(gameFile.timingPoints[i].time - gameFile.preempt <= currentTime*1000){
 			time = gameFile.timingPoints[i].time;
 			float tempBeatLength;
 			tempBeatLength = gameFile.timingPoints[i].beatLength;
@@ -87,6 +86,16 @@ void GameManager::update(){
 				//std::cout << "slider speed override: " << sliderSpeedOverride << std::endl;
 			}
 			gameFile.timingPoints.pop_back();
+			/*std::cout << "T----------------------T" << std::endl;
+		    std::cout << timingSettingsForHitObject.beatLength << std::endl;
+		    std::cout << timingSettingsForHitObject.meter << std::endl;
+		    std::cout << timingSettingsForHitObject.sampleSet << std::endl;
+		    std::cout << timingSettingsForHitObject.sampleIndex << std::endl;
+		    std::cout << timingSettingsForHitObject.volume << std::endl;
+		    std::cout << timingSettingsForHitObject.uninherited << std::endl;
+		    std::cout << timingSettingsForHitObject.effects << std::endl;
+		    std::cout << timingSettingsForHitObject.sliderSpeedOverride << std::endl;
+		    std::cout << "T----------------------T" << std::endl;*/
 		}
 		else
 			break;
@@ -105,7 +114,14 @@ void GameManager::update(){
 			if(gameFile.comboColours.size()) objects[objects.size()-1]->data.colour = gameFile.comboColours[currentComboIndex];
 			objects[objects.size()-1]->data.comboNumber = combo;
 			combo++;
-			objects[objects.size()-1]->data.timing = timingSettingsForHitObject;
+			objects[objects.size()-1]->data.timing.beatLength = timingSettingsForHitObject.beatLength;
+			objects[objects.size()-1]->data.timing.meter = timingSettingsForHitObject.meter;
+			objects[objects.size()-1]->data.timing.sampleSet = timingSettingsForHitObject.sampleSet;
+			objects[objects.size()-1]->data.timing.sampleIndex = timingSettingsForHitObject.sampleIndex;
+			objects[objects.size()-1]->data.timing.volume = timingSettingsForHitObject.volume;
+			objects[objects.size()-1]->data.timing.uninherited = timingSettingsForHitObject.uninherited;
+			objects[objects.size()-1]->data.timing.effects = timingSettingsForHitObject.effects;
+			objects[objects.size()-1]->data.timing.sliderSpeedOverride = timingSettingsForHitObject.sliderSpeedOverride;
 			gameFile.hitObjects.pop_back();
 		}
 		else
