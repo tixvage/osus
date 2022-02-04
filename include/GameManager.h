@@ -9,8 +9,8 @@ class GameManager{
 		GameManager();
 		void run();
 		void loadGame(std::string filename);
-		void destroyHitObject();
-		void destroyDeadHitObject();
+		void destroyHitObject(int index);
+		void destroyDeadHitObject(int index);
 		float windowScale = 2.0f;
 		int skip = 4;
 		Texture2D hitCircle;
@@ -53,6 +53,7 @@ class GameManager{
 		std::vector<HitObject*> dead_objects;
 		float clip(float value, float min, float max);
 		timingSettings timingSettingsForHitObject;
+		int index;
 	private:
 		static GameManager* inst_;
 		void init();

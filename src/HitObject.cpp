@@ -184,7 +184,7 @@ void Circle::update(){
         data.point = 0;
         //resets the combo
         gm->clickCombo = 0;
-        gm->destroyHitObject();
+        gm->destroyHitObject(data.index);
     }
 }
 
@@ -242,7 +242,7 @@ void Circle::dead_update(){
     GameManager* gm = GameManager::getInstance();
     //gives 400ms for the animation to play, MAKE IT DEPENDANT TO APPROACH RATE
     if (data.time+400 < gm->currentTime*1000)
-        gm->destroyDeadHitObject();
+        gm->destroyDeadHitObject(data.index);
 }
 
 //renders the combo number on top of the circle, NEED TO FIX THE DIGITS
@@ -509,7 +509,7 @@ void Slider::update(){
         data.time = gm->currentTime*1000;
         data.point = 0;
         gm->clickCombo = 0;
-        gm->destroyHitObject();
+        gm->destroyHitObject(data.index);
     }
 }
 
@@ -630,7 +630,7 @@ void Slider::dead_update(){
     if (data.time+400 < gm->currentTime*1000){
         //prevent memory leak
         UnloadRenderTexture(sliderTexture);
-        gm->destroyDeadHitObject();
+        gm->destroyDeadHitObject(data.index);
     }
 }
 

@@ -122,14 +122,17 @@ void GameManager::update(){
 			objects[objects.size()-1]->data.timing.uninherited = timingSettingsForHitObject.uninherited;
 			objects[objects.size()-1]->data.timing.effects = timingSettingsForHitObject.effects;
 			objects[objects.size()-1]->data.timing.sliderSpeedOverride = timingSettingsForHitObject.sliderSpeedOverride;
+			objects[objects.size()-1]->data.index = objects.size()-1;
 			gameFile.hitObjects.pop_back();
 		}
 		else
 			break;
 	}
 	//update and check collision for every hit circle
-	for(int i = 0; i < objects.size(); i++){
-		if(i == 0){
+	int newSize = objects.size();
+	int oldSize = objects.size();
+	for(int i = 0; i < newSize; i++){
+		if(std::abs(currentTime*1000 - objects[i]->data.time) <= gameFile.p50Final){
 			if (pressed){
 				if (objects[i]->data.type != 2){
 					if (CheckCollisionPointCircle(Vector2{(float)GetMouseX(), (float)GetMouseY()},Vector2{(float)objects[i]->data.x*windowScale,(float)objects[i]->data.y*windowScale}, 56*windowScale/2) && pressed){
@@ -153,30 +156,67 @@ void GameManager::update(){
 							clickCombo++;
 						}
 						objects[i]->data.time = currentTime*1000;
-						destroyHitObject();
+						destroyHitObject(i);
+						i--;
 					}
-					else
+					else{
+						objects[i]->data.index = i;
 						objects[i]->update();
+						newSize = objects.size();
+						if(newSize != oldSize){
+							i--;
+							oldSize = newSize;
+						}
+					}
 				}
 				else if (objects[i]->data.type == 2){
 					if(Slider* tempslider = dynamic_cast<Slider*>(objects[i]))
 						if(CheckCollisionPointCircle(MousePosition,Vector2{tempslider->renderPoints[tempslider->position].x*windowScale, tempslider->renderPoints[tempslider->position].y*windowScale} ,128*windowScale/2 ) && pressed && currentTime*1000 < tempslider->data.time + gameFile.p100Final)
         					tempslider->is_hit_at_first = true;
         			//this cursed else train is nothing to worry about...
-    				objects[i]->update();
-				}
-				else
+    				objects[i]->data.index = i;
 					objects[i]->update();
+					newSize = objects.size();
+					if(newSize != oldSize){
+						i--;
+						oldSize = newSize;
+					}
+				}
+				else{
+					objects[i]->data.index = i;
+					objects[i]->update();
+					newSize = objects.size();
+					if(newSize != oldSize){
+						i--;
+						oldSize = newSize;
+					}
+				}
 			}
-			else
+			else{
+				objects[i]->data.index = i;
 				objects[i]->update();
+				newSize = objects.size();
+				if(newSize != oldSize){
+					i--;
+					oldSize = newSize;
+				}
+			}
 		}
-		else
+		else{
+			objects[i]->data.index = i;
 			objects[i]->update();
+			newSize = objects.size();
+			if(newSize != oldSize){
+				i--;
+				oldSize = newSize;
+			}
+		}
 	}
 	//also update the dead objects
-	for(int i = 0; i < dead_objects.size(); i++)
+	for(int i = 0; i < dead_objects.size(); i++){
+		dead_objects[i]->data.index = i;
 		dead_objects[i]->dead_update();
+	}
 }
 
 //main rendering loop
@@ -274,16 +314,16 @@ void GameManager::spawnHitObject(HitObjectData data){
 	}
 }
 
-void GameManager::destroyHitObject(){
+void GameManager::destroyHitObject(int index){
 	//declare a hitobject dead
-	dead_objects.push_back(objects[0]);
-	objects.erase(objects.begin());
+	dead_objects.push_back(objects[index]);
+	objects.erase(objects.begin()+index);
 }
 
-void GameManager::destroyDeadHitObject(){
+void GameManager::destroyDeadHitObject(int index){
 	//somehow "kill" the "dead" object
-	delete dead_objects[0];
-	dead_objects.erase(dead_objects.begin());
+	delete dead_objects[index];
+	dead_objects.erase(dead_objects.begin()+index);
 }
 
 void GameManager::render_points(){
