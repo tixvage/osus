@@ -63,6 +63,7 @@ void GameManager::update(){
 	pressed = IsMouseButtonPressed(0);
 	down = IsMouseButtonDown(0);
 
+	timingSettings timingSettingsForHitObject;
 
 	//currently not used that much but it will be
 	int timingSize = gameFile.timingPoints.size();
@@ -73,16 +74,16 @@ void GameManager::update(){
 			tempBeatLength = gameFile.timingPoints[i].beatLength;
 			//std::cout << "beatLength: " << tempBeatLength << std::endl;
 			if(tempBeatLength > 0)
-				beatLength = tempBeatLength;
-			meter = gameFile.timingPoints[i].meter;
-			sampleSet = gameFile.timingPoints[i].sampleSet;
-			sampleIndex = gameFile.timingPoints[i].sampleIndex;
-			volume = gameFile.timingPoints[i].volume;
-			uninherited = gameFile.timingPoints[i].uninherited;
-			effects = gameFile.timingPoints[i].effects;
+				timingSettingsForHitObject.beatLength = tempBeatLength;
+			timingSettingsForHitObject.meter = gameFile.timingPoints[i].meter;
+			timingSettingsForHitObject.sampleSet = gameFile.timingPoints[i].sampleSet;
+			timingSettingsForHitObject.sampleIndex = gameFile.timingPoints[i].sampleIndex;
+			timingSettingsForHitObject.volume = gameFile.timingPoints[i].volume;
+			timingSettingsForHitObject.uninherited = gameFile.timingPoints[i].uninherited;
+			timingSettingsForHitObject.effects = gameFile.timingPoints[i].effects;
 			//calculate the slider speed
 			if(tempBeatLength < 0){
-				sliderSpeedOverride = (100 / tempBeatLength * (-1));
+				timingSettingsForHitObject.sliderSpeedOverride = (100 / tempBeatLength * (-1));
 				//std::cout << "slider speed override: " << sliderSpeedOverride << std::endl;
 			}
 			gameFile.timingPoints.pop_back();
@@ -104,6 +105,7 @@ void GameManager::update(){
 			if(gameFile.comboColours.size()) objects[objects.size()-1]->data.colour = gameFile.comboColours[currentComboIndex];
 			objects[objects.size()-1]->data.comboNumber = combo;
 			combo++;
+			objects[objects.size()-1]->data.timing = timingSettingsForHitObject;
 			gameFile.hitObjects.pop_back();
 		}
 		else

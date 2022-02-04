@@ -3,6 +3,17 @@
 #include <raylib.h>
 #include <raymath.h>
 
+struct timingSettings{
+	float beatLength;
+	int meter;
+	int sampleSet;
+	int sampleIndex;
+	int volume;
+	bool uninherited;
+	int effects;
+	float sliderSpeedOverride = 1;
+};
+
 class GameManager{
 	public:
 		static GameManager* getInstance();

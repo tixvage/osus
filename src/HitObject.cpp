@@ -1,5 +1,4 @@
 #include <HitObject.h>
-#include "GameManager.h"
 #include <cmath>
 #include <algorithm>
 

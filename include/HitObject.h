@@ -4,6 +4,7 @@
 #include <iostream>
 #include <raylib.h>
 #include <climits>
+#include "GameManager.h"
 
 struct catmullRomSegment
 {
@@ -37,7 +38,7 @@ struct HitObjectData{
     int comboNumber;
     bool useDefaultHitSound;
     std::vector<int> colour;
-    
+    timingSettings timing;
 };
 
 class HitObject{
