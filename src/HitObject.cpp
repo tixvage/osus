@@ -469,6 +469,31 @@ void Slider::init(){
     DrawCircle((renderPoints[renderPoints.size()-1].x-minX+(float)gm->hitCircle.height/4)*gm->windowScale, sliderTexture.texture.height - (renderPoints[renderPoints.size()-1].y-minY+(float)gm->hitCircle.height/4)*gm->windowScale, (gm->hitCircle.height/4-5)*gm->windowScale,Color{12,12,12,255});
     //finalizes the texture
     EndTextureMode();
+
+    float beatLengthBase = 1;
+    float beatLength = 1;
+    if (not data.timing.uninherited){
+        beatLength = beatLengthBase * data.timing.sliderSpeedOverride;
+    }
+    else{
+        beatLengthBase = beatLength = data.timing.beatLength;
+    }
+
+    float tickLengthDiv = 100.0f *  data.timing.sliderSpeedOverride / std::stof(gm->gameFile.configDifficulty["SliderTickRate"]) / (beatLength / beatLengthBase);
+    tickCount = (int) std::ceil(data.length / tickLengthDiv) - 1;
+
+    int what = data.timing.beatLength;
+
+    if (tickCount > 0) {
+        float tickTOffset = 1.f / (tickCount + 1);
+        float t = tickTOffset;
+
+        std::cout << "--------------------\n";
+
+        for (int i = 0; i < tickCount; i++, t += tickTOffset){
+            std::cout << t << std::endl;            
+        }
+    }
 }
 
 //main code that runs for every slider on screen
@@ -516,6 +541,15 @@ void Slider::update(){
 //the slider renderer, NEED TO ADD THE TICKS AND MORE ANIMATION STUFF
 void Slider::render(){
     GameManager* gm = GameManager::getInstance();
+    
+    if (tickCount > 0){
+        for(int i = 0; i < tickCount; i++){
+            int tick_pos = (int)(data.length / (tickCount + 1)) * (i+1);
+            if (position < tick_pos)
+                DrawCircleV(renderPoints[tick_pos] * vectorize(2), 20, RED);
+        }
+    }
+
     if(data.curveType == 'L' || data.curveType == 'B' || data.curveType == 'P' || data.curveType == 'C'){
         if(renderPoints.size() > 0){
             //calculate the opacity

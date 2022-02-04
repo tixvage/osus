@@ -99,6 +99,7 @@ class Slider : public HitObject{
         bool repeat2 = false;
         int curRepeat = 0;
     private:
+        int tickCount;
         float timer;
         std::vector<Vector2> edgePoints; 
         RenderTexture2D sliderTexture;
