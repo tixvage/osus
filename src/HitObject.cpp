@@ -417,26 +417,9 @@ void Slider::init(){
                     Vector2 whoa = lerp(samples[t], samples[t+1], s * ((float)indices.size()) - (float)i);
                     //std::cout << "i: " << i << "  t: " << t << "  s: " << s << "  x: " << whoa.x << "  y: " << whoa.y << std::endl;
                 }
-
-
-                if(i != edgePoints.size()-1)
+                if(i != edgePoints.size()-1 && renderPoints.size() > 1)
                     renderPoints.pop_back();
                 curveIndex++;
-                /*for(int k = 1000; k > 0; k--){
-                    for(int j = 1; j < tValues.size()-1 -(int)(i != edgePoints.size()-1); j+= (int)(k%2)+1){
-                        float dz = distance(renderPoints[j-1 + curSize], renderPoints[j + curSize]);
-                        float dx = distance(renderPoints[j + curSize], renderPoints[j+1 + curSize]);
-                        float r = ((dx-dz)/(dz+dx))/2;
-                        if(r > 0){
-                            tValues[j] = tValues[j] + r*(tValues[j+1]-tValues[j]);
-                        }
-                        else{
-                            tValues[j] = tValues[j] + r*(tValues[j]-tValues[j-1]);
-                        }
-                        renderPoints[j + curSize] = getBezierPoint(tempEdges, tempEdges.size(), tValues[j]);
-                    }
-                }*/
-
                 tempEdges.clear();
             }
         }
