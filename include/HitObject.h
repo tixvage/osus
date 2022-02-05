@@ -5,6 +5,7 @@
 #include <raylib.h>
 #include <climits>
 
+
 struct catmullRomSegment
 {
     Vector2 a;

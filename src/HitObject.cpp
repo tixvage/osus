@@ -3,6 +3,15 @@
 #include <algorithm>
 #include "GameManager.h"
 
+float clip( float n, float lower, float upper ){
+    n = ( n > lower ) * n + !( n > lower ) * lower;
+    return ( n < upper ) * n + !( n < upper ) * upper;
+}
+
+Vector2 lerp(Vector2 a, Vector2 b, float t){
+    return { x:(1 - t) * a.x + t * b.x, y:(1 - t) * a.y + t * b.y};
+}
+
 inline Vector2 operator + (Vector2 p0, Vector2 p1){
     return Vector2Add(p0, p1);
 }
@@ -26,6 +35,21 @@ Vector2 vectorize(float i) {
 float distance(Vector2 &p0, Vector2 &p1){
     return std::sqrt(std::pow(std::abs(p0.x - p1.x),2) + std::pow(std::abs(p0.y - p1.y),2));
 }
+
+int Search(std::vector<float> arr, float x,int l,int r) {
+    if (r >= l) {
+        int mid = (l + r) / 2;
+        if (arr[mid] == x || l==r)
+            return mid;
+        if (arr[mid] > x)
+            return Search(arr, x,l, mid - 1);
+        else 
+            return Search(arr, x,mid + 1, r);
+    }
+    else
+        return l;
+}
+
 
 float interpolate(float *p, float *time, float t) {
     float L01 = p[0] * (time[1] - t) / (time[1] - time[0]) + p[1] * (t - time[0]) / (time[1] - time[0]);
@@ -350,18 +374,70 @@ void Slider::init(){
         for(int i = 0; i < edgePoints.size(); i++){
             tempEdges.push_back(edgePoints[i]);
             if((edgePoints[i].x == edgePoints[i+1].x && edgePoints[i].y == edgePoints[i+1].y) || i == edgePoints.size()-1){
+                std::vector<float> tValues;
+                int curSize = renderPoints.size();
                 currentResolution = 0;
                 float tempResolution = resolution / (totalCalculatedLength / curveLengths[curveIndex]);
-                for(float j = 0; j < 1; j += 1.0f / tempResolution){
+                /*for(float j = 0; j < 1; j += 1.0f / tempResolution){
                     if(currentResolution > tempResolution) break;
                     currentResolution++;
                     Vector2 tmp = getBezierPoint(tempEdges, tempEdges.size(), j);
-                    renderPoints.push_back(tmp);
+                    tempRender.push_back(tmp);
+                    tValues.push_back(j);
+                }*/
+
+                std::vector<Vector2> samples;
+                std::vector<int> indices;
+                std::vector<float> lengths;
+                lengths.push_back(0);
+                samples.push_back(getBezierPoint(tempEdges, tempEdges.size(), 0));
+                for(int k = 1; k < tempResolution + 1; k++){
+                    samples.push_back(getBezierPoint(tempEdges, tempEdges.size(), k/tempResolution));
+                    lengths.push_back(distance(samples[k], samples[k-1]) + lengths[k-1]);
                 }
+                for(int k = 1; k < tempResolution + 1; k++)
+                    lengths[k] /= lengths[tempResolution];
+                indices.push_back(0);
+                for(int k = 1; k < tempResolution + 1; k++){
+                    float s = (float)k / tempResolution;
+                    int j = Search(lengths,s,0,lengths.size()-1);
+                    indices.push_back(j);
+                }
+                samples.push_back(getBezierPoint(tempEdges, tempEdges.size(), 1));
+                for(float s = 0; s < 1; s += 1.0f / tempResolution){
+                    if(currentResolution > tempResolution) break;
+                    currentResolution++;
+                    if(s == 1){
+                        renderPoints.push_back(samples[samples.size() - 1]);
+                        continue;
+                    }
+                    int i = (int)(s * (float)indices.size());
+                    int t = indices[i];
+                    renderPoints.push_back(lerp(samples[t], samples[t+1], s * ((float)indices.size()) - (float)i));
+                    Vector2 whoa = lerp(samples[t], samples[t+1], s * ((float)indices.size()) - (float)i);
+                    //std::cout << "i: " << i << "  t: " << t << "  s: " << s << "  x: " << whoa.x << "  y: " << whoa.y << std::endl;
+                }
+
+
                 if(i != edgePoints.size()-1)
                     renderPoints.pop_back();
-                tempEdges.clear();
                 curveIndex++;
+                /*for(int k = 1000; k > 0; k--){
+                    for(int j = 1; j < tValues.size()-1 -(int)(i != edgePoints.size()-1); j+= (int)(k%2)+1){
+                        float dz = distance(renderPoints[j-1 + curSize], renderPoints[j + curSize]);
+                        float dx = distance(renderPoints[j + curSize], renderPoints[j+1 + curSize]);
+                        float r = ((dx-dz)/(dz+dx))/2;
+                        if(r > 0){
+                            tValues[j] = tValues[j] + r*(tValues[j+1]-tValues[j]);
+                        }
+                        else{
+                            tValues[j] = tValues[j] + r*(tValues[j]-tValues[j-1]);
+                        }
+                        renderPoints[j + curSize] = getBezierPoint(tempEdges, tempEdges.size(), tValues[j]);
+                    }
+                }*/
+
+                tempEdges.clear();
             }
         }
         //std::cout << "----------------------------------------------------------------------------"<< std::endl;
