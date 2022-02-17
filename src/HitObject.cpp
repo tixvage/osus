@@ -531,12 +531,10 @@ void Slider::init(){
 
     float beatLengthBase = 1;
     float beatLength = 1;
-    if (not data.timing.uninherited){
+    if (not data.timing.uninherited)
         beatLength = beatLengthBase * data.timing.sliderSpeedOverride;
-    }
-    else{
+    else
         beatLengthBase = beatLength = data.timing.beatLength;
-    }
 
     float tickLengthDiv = 100.0f *  data.timing.sliderSpeedOverride / std::stof(gm->gameFile.configDifficulty["SliderTickRate"]) / (beatLength / beatLengthBase);
     tickCount = (int) std::ceil(data.length / tickLengthDiv) - 1;
@@ -549,9 +547,8 @@ void Slider::init(){
 
         std::cout << "--------------------\n";
 
-        for (int i = 0; i < tickCount; i++, t += tickTOffset){
-            std::cout << t << std::endl;            
-        }
+        for (int i = 0; i < tickCount; i++, t += tickTOffset)
+            std::cout << t << std::endl;
     }
 }
 

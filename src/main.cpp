@@ -11,7 +11,7 @@ int main(){
         DrawText("Try to close the window to load the game (trust me its gonna work)", 10, 30, 20, BLUE);
         EndDrawing();
     }
-    gameManager->loadGame("BeautifulWorld.osu");
+    gameManager->loadGame("faik.osu");
     std::cout << "PRESS RIGHT TO START" << std::endl;
     while(!WindowShouldClose()){
         BeginDrawing();
